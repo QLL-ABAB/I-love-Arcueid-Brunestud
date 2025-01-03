@@ -1,0 +1,32 @@
+word_print1 = []
+word_print2 = []
+word_print3 = []
+word_print4 = []
+word_print5 = []
+
+
+
+
+row_num = 1
+row = [word_print1,word_print2,word_print3,word_print4,word_print5]
+
+word_print =list( "Hello, World!")
+print(word_print)
+print("".join(word_print))
+
+for i in range(len(word_print)):
+    row[row_num - 1].append(word_print[i])
+    if (
+        word_print[i] == ","
+        or word_print[i] == "."
+        or word_print[i] == "!"
+        or word_print[i] == "?"
+        or word_print[i] == "\n"
+    ):
+        row_num += 1
+
+print(word_print1)
+print(word_print2)
+print(word_print3)
+print(word_print4)
+print(word_print5)
