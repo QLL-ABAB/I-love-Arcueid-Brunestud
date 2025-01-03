@@ -2,6 +2,7 @@ import pygame
 from pygame.locals import *
 import copy
 import time
+import math
 
 from Collections import *
 from Settings import *
@@ -35,14 +36,48 @@ class Scene_Fight(Listener):
 
         self.player_right = True
         self.enemy_left = True
-        self.player_act = True
+        self.player_act = False
         self.enemy_act = False
+        self.choose = True
+        self.player_defend = False
+        self.player_swing = False
 
         self.animation_num = 0
         self.animation_speed = 1
 
         self.player_hp_showings = []
         self.enemy_hp_showings = []
+
+        self.button_image1 = pygame.Surface((140, 70))
+        self.button_image1.fill((50, 50, 50))
+        self.button_rect1 = self.button_image1.get_rect()
+        self.button_rect1.center = (200, 550)
+
+        self.button_image1_clicked = pygame.Surface((140, 70))
+        self.button_image1_clicked.fill((100, 100, 100))
+
+        self.button_image2 = pygame.Surface((140, 70))
+        self.button_image2.fill((50, 50, 50))
+        self.button_rect2 = self.button_image2.get_rect()
+        self.button_rect2.center = (350, 550)
+
+        self.button_image2_clicked = pygame.Surface((140, 70))
+        self.button_image2_clicked.fill((100, 100, 100))
+
+        self.button_text1 = font1.render("FIGHT", True, (255, 255, 255))
+        self.button_text2 = font1.render("DEFEND", True, (255, 255, 255))
+        self.button_text1_rect = self.button_text1.get_rect()
+        self.button_text2_rect = self.button_text2.get_rect()
+        self.button_text1_rect.center = (200, 550)
+        self.button_text2_rect.center = (350, 550)
+
+        self.attack_harder = False
+        self.attack_harder_image = pygame.transform.scale(
+            pygame.image.load(Game_Path.attribute_path[15]),
+            (SceneSettings.attribute_size * 3, SceneSettings.attribute_size * 3),
+        )
+        self.attack_harder_rect = self.attack_harder_image.get_rect()
+        self.attack_harder_rect.center = (40, 90)
 
         for i in range(20):
             self.player_hp_showings.append(
@@ -101,13 +136,6 @@ class Scene_Fight(Listener):
 
     def listen(self, event: Event):
         super().listen(event)
-        if (self.player_right == False and self.player_act == True) or (
-            self.enemy_left == False and self.enemy_act == True
-        ):
-            self.animation_num += 2
-
-        else:
-            self.animation_num += 1
 
         if event.code == Event_Code.DRAW:
 
@@ -138,11 +166,11 @@ class Scene_Fight(Listener):
                     self.player_pos[0]
                     + (self.enemy_pos[0] - 100 - self.player_pos[0])
                     * self.animation_num
-                    / 400,
+                    / 200,
                     self.player_pos[1]
                     + (self.enemy_pos[1] - self.player_pos[1])
                     * self.animation_num
-                    / 400,
+                    / 200,
                     200,
                     200,
                 )
@@ -153,11 +181,11 @@ class Scene_Fight(Listener):
                     - 100
                     - (self.enemy_pos[0] - 100 - self.player_pos[0])
                     * self.animation_num
-                    / 400,
+                    / 200,
                     self.enemy_pos[1]
                     - (self.enemy_pos[1] - self.player_pos[1])
                     * self.animation_num
-                    / 400,
+                    / 200,
                     200,
                     200,
                 )
@@ -169,11 +197,11 @@ class Scene_Fight(Listener):
                             self.enemy_pos[0]
                             - (self.enemy_pos[0] - 100 - self.player_pos[0])
                             * self.animation_num
-                            / 400,
+                            / 200,
                             self.enemy_pos[1]
                             - (self.enemy_pos[1] - self.player_pos[1])
                             * self.animation_num
-                            / 400,
+                            / 200,
                             200,
                             200,
                         )
@@ -184,11 +212,11 @@ class Scene_Fight(Listener):
                             + 100
                             + (self.enemy_pos[0] - 100 - self.player_pos[0])
                             * self.animation_num
-                            / 400,
+                            / 200,
                             self.enemy_pos[1]
                             - (self.enemy_pos[1] - self.player_pos[1])
                             * self.animation_num
-                            / 400,
+                            / 200,
                             200,
                             200,
                         )
@@ -203,11 +231,11 @@ class Scene_Fight(Listener):
                             self.enemy_pos[0]
                             - (self.enemy_pos[0] - 100 - self.player_pos[0])
                             * self.animation_num
-                            / 400,
+                            / 200,
                             self.enemy_pos[1]
                             - (self.enemy_pos[1] - self.player_pos[1])
                             * self.animation_num
-                            / 400,
+                            / 200,
                             200,
                             200,
                         )
@@ -218,11 +246,11 @@ class Scene_Fight(Listener):
                             + 100
                             + (self.enemy_pos[0] - 100 - self.player_pos[0])
                             * self.animation_num
-                            / 400,
+                            / 200,
                             self.player_pos[1]
                             + (self.enemy_pos[1] - self.player_pos[1])
                             * self.animation_num
-                            / 400,
+                            / 200,
                             200,
                             200,
                         )
@@ -231,27 +259,96 @@ class Scene_Fight(Listener):
 
             self.player.draw()
 
-        if self.animation_num >= 400:
-            self.animation_num = 0
-            if self.player_act:
-                if self.player_right:
+            if self.attack_harder:
+                window.blit(self.attack_harder_image, self.attack_harder_rect)
 
-                    self.player_right = False
-                    self.enemy_hp[self.type - 1] -= self.player_real.attack
+            if self.choose:
+                mouse = pygame.mouse.get_pos()
+                mouse_pressed = pygame.mouse.get_pressed()
 
-                elif not self.player_right:
-                    self.player_act = False
-                    self.enemy_act = True
-                    self.player_right = True
+                if self.button_rect1.collidepoint(mouse):
+                    window.blit(self.button_image1_clicked, self.button_rect1)
+                    if mouse_pressed[0]:
+                        self.choose = False
+                        self.player_swing = True
+                        self.player_act = True
 
-            elif self.enemy_act:
-                if self.enemy_left:
-                    self.enemy_left = False
-                    self.player_real.hp -= self.enemy_attack[self.type - 1]
+                else:
+                    window.blit(self.button_image1, self.button_rect1)
 
-                elif not self.enemy_left:
-                    self.enemy_act = False
-                    self.player_act = True
-                    self.enemy_left = True
+                if self.button_rect2.collidepoint(mouse):
+                    window.blit(self.button_image2_clicked, self.button_rect2)
+                    if mouse_pressed[0]:
+                        self.choose = False
+                        self.player_defend = True
+                        self.enemy_act = True
+                        self.enemy_left = True
+                else:
+                    window.blit(self.button_image2, self.button_rect2)
 
-            time.sleep(1)
+                window.blit(self.button_text1, self.button_text1_rect)
+                window.blit(self.button_text2, self.button_text2_rect)
+
+            if self.player_swing:
+
+                if (self.player_right == False and self.player_act == True) or (
+                    self.enemy_left == False and self.enemy_act == True
+                ):
+                    self.animation_num += 6
+                else:
+                    self.animation_num += 4
+
+                if self.animation_num >= 200:
+                    self.animation_num = 0
+                    if self.player_act:
+                        if self.player_right:
+                            self.player_right = False
+                            if self.attack_harder:
+                                self.enemy_hp[self.type - 1] -= math.floor(
+                                    self.player_real.attack * 1.5
+                                )
+                                self.attack_harder = False
+                            else:
+                                self.enemy_hp[self.type - 1] -= self.player_real.attack
+
+                        elif not self.player_right:
+                            self.player_act = False
+                            self.enemy_act = True
+                            self.player_right = True
+
+                    elif self.enemy_act:
+                        if self.enemy_left:
+                            self.enemy_left = False
+                            self.player_real.hp -= self.enemy_attack[self.type - 1]
+
+                        elif not self.enemy_left:
+                            self.enemy_act = False
+                            self.enemy_left = True
+                            self.choose = True
+                            self.player_swing = False
+
+                    time.sleep(1)
+
+            if self.player_defend:
+                if self.enemy_left == False and self.enemy_act == True:
+                    self.animation_num += 6
+                else:
+                    self.animation_num += 4
+
+                if self.animation_num >= 200:
+
+                    self.animation_num = 0
+                    self.attack_harder = True
+
+                    if self.enemy_act:
+                        if self.enemy_left:
+                            self.enemy_left = False
+                            self.player_real.hp -= self.enemy_attack[self.type - 1] - 1
+
+                        elif not self.enemy_left:
+                            self.enemy_act = False
+                            self.enemy_left = True
+                            self.choose = True
+                            self.player_defend = False
+
+                    time.sleep(1)

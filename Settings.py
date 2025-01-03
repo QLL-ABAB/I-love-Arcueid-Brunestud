@@ -203,6 +203,7 @@ class Game_Path:
         r".\assets\player\through.png",  # 12
         r".\assets\player\add_bullet_speed.png",  # 13
         r".\assets\player\skill.png",  # 14
+        r".\assets\player\attack_harder.png",  # 15
     ]
 
     game_machine_path = r".\assets\tiles\game_machine.jpg"
