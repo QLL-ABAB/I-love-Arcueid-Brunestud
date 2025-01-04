@@ -285,4 +285,5 @@ class Game_Path:
     ]
 
 
-frame_rate = 60  # 游戏帧率
+frame_rate1 = 60  # 游戏帧率
+frame_rate_small_game = 5

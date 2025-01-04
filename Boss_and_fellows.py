@@ -42,7 +42,7 @@ class Boss1(Fixed_object):
         )
         self.attack = BossSettings.boss_attack  # boss的攻击力
         self.speed = BossSettings.boss_Speed  # boss的速度
-        self.move_region = ((900, 1300), (200, 700))
+        self.move_region = ((800, 1350), (150, 800))
         self.swift = BossSettings.boss_animation_speed  # boss动画效果
         self.num = 0  # boss的动画效果
         self.move_num = 0  # boss的移动效果
@@ -56,6 +56,8 @@ class Boss1(Fixed_object):
         self.boss_die_num = 0
         self.num = 0
         self.boss_animaton = True
+        self.move_x = 0
+        self.move_y = 0
 
     def listen(self, event: Event):
 
@@ -64,37 +66,33 @@ class Boss1(Fixed_object):
             self.move_num += 1
             if self.move_num >= 10:
                 self.move_num = 0
-                self.derection = random.randint(1, 5)
-
-            if (
-                self.derection == 1
-                and self.rect.top >= self.move_region[1][0] + self.speed
-                and self.hp > 0
-            ):
-                self.rect.top -= self.speed
-            elif (
-                self.derection == 2
-                and self.rect.bottom <= self.move_region[1][1] - self.speed
-                and self.hp > 0
-            ):
-                self.rect.bottom += self.speed
-            elif (
-                self.derection == 3
-                and self.rect.left >= self.move_region[0][0] + self.speed
-                and self.hp > 0
-            ):
-                self.rect.left -= self.speed
-            elif (
-                self.derection == 4
-                and self.rect.right <= self.move_region[0][1] - self.speed
-                and self.hp > 0
-            ):
-                self.rect.right += self.speed
-            else:
-                self.rect.right += 0
+                self.move_x = random.uniform(-1, 1)
+                self.move_y = random.uniform(-1, 1)
 
             if self.hp > 0:
-                self.auto_fire()
+                # if  self.rect.top >= self.move_region[1][0] + self.speed:
+                if not (
+                    (
+                        self.rect.top <= self.move_region[1][0] + self.speed
+                        and self.move_y < 0
+                    )
+                    or (
+                        self.rect.bottom >= self.move_region[1][1] - self.speed
+                        and self.move_y > 0
+                    )
+                    or (
+                        self.rect.left <= self.move_region[0][0] + self.speed
+                        and self.move_x < 0
+                    )
+                    or (
+                        self.rect.right >= self.move_region[0][1] - self.speed
+                        and self.move_x > 0
+                    )
+                ):
+                    self.rect.top += self.move_y * self.speed
+                    self.rect.left += self.move_x * self.speed
+
+                    self.auto_fire()
 
         elif event.code == Event_Code.BOSS_DIE and self.boss_animaton:
             self.boss_die_num += 1

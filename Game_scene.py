@@ -21,6 +21,7 @@ class Greedy_snake(Listener):
         self.snake_length = 1
         self.snake_x = 700
         self.snake_y = 360
+        # self.run_num = 0
 
         self.food_x = (
             round(
@@ -96,30 +97,10 @@ class Greedy_snake(Listener):
             window.fill((255, 255, 255))
             coin_num = font1.render("Coins: " + str(self.player.coin), True, (0, 0, 0))
             window.blit(coin_num, (20, 20))
+            # self.run_num += 1
 
-            for event in pygame.event.get():
-
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_LEFT or event.key == pygame.K_a:
-                        if self.x_change != self.snake_block_size:
-                            self.x_change = -self.snake_block_size
-                            self.y_change = 0
-                    elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
-                        if self.x_change != -self.snake_block_size:
-                            self.x_change = self.snake_block_size
-                            self.y_change = 0
-                    elif event.key == pygame.K_UP or event.key == pygame.K_w:
-                        if self.y_change != self.snake_block_size:
-                            self.y_change = -self.snake_block_size
-                            self.x_change = 0
-                    elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
-                        if self.y_change != -self.snake_block_size:
-                            self.y_change = self.snake_block_size
-                            self.x_change = 0
-
-                    elif event.key == pygame.K_ESCAPE:
-                        self.game_close = True
-
+            # if self.run_num >= 20:
+            #     self.run_num = 0
             self.snake_x += self.x_change
             self.snake_y += self.y_change
 
@@ -130,8 +111,6 @@ class Greedy_snake(Listener):
                 or self.snake_y < 0
             ):
                 self.game_close = True
-
-            time.sleep(0.05)
 
             pygame.draw.rect(
                 window,
@@ -149,6 +128,7 @@ class Greedy_snake(Listener):
             snake_head.append(self.snake_y)
             self.snake_list.append(snake_head)
             if len(self.snake_list) > self.snake_length:
+
                 del self.snake_list[0]
 
             for x in self.snake_list[:-1]:
@@ -184,6 +164,7 @@ class Greedy_snake(Listener):
                     * 20
                 )
                 self.snake_length += 1
+                print(self.snake_length)
                 self.player.coin += 1
 
                 pygame.time.Clock().tick(self.snake_speed)

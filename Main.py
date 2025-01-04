@@ -18,7 +18,6 @@ if __name__ == "__main__":
     game_manager = GameManager()
 
     game_manager.bgm_player.update()
-
     while True:
         window.fill(WindowSettings.color)
 
@@ -46,6 +45,52 @@ if __name__ == "__main__":
 
         if game_manager.scene == game_manager.scene_boss:
             add_event(Event(Event_Code.BOSS_ANIMATIOM))
+
+        if game_manager.scene == game_manager.scene_greedy_snake:
+            for event in event_get:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_LEFT or event.key == pygame.K_a:
+                        if (
+                            game_manager.scene_greedy_snake.x_change
+                            != game_manager.scene_greedy_snake.snake_block_size
+                        ):
+                            game_manager.scene_greedy_snake.x_change = (
+                                -game_manager.scene_greedy_snake.snake_block_size
+                            )
+                            game_manager.scene_greedy_snake.y_change = 0
+
+                    elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
+                        if (
+                            game_manager.scene_greedy_snake.x_change
+                            != -game_manager.scene_greedy_snake.snake_block_size
+                        ):
+                            game_manager.scene_greedy_snake.x_change = (
+                                game_manager.scene_greedy_snake.snake_block_size
+                            )
+                            game_manager.scene_greedy_snake.y_change = 0
+
+                    elif event.key == pygame.K_UP or event.key == pygame.K_w:
+                        if (
+                            game_manager.scene_greedy_snake.y_change
+                            != game_manager.scene_greedy_snake.snake_block_size
+                        ):
+                            game_manager.scene_greedy_snake.y_change = (
+                                -game_manager.scene_greedy_snake.snake_block_size
+                            )
+                            game_manager.scene_greedy_snake.x_change = 0
+
+                    elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
+                        if (
+                            game_manager.scene_greedy_snake.y_change
+                            != -game_manager.scene_greedy_snake.snake_block_size
+                        ):
+                            game_manager.scene_greedy_snake.y_change = (
+                                game_manager.scene_greedy_snake.snake_block_size
+                            )
+                            game_manager.scene_greedy_snake.x_change = 0
+
+                    elif event.key == pygame.K_ESCAPE:
+                        game_manager.scene_greedy_snake.game_close = True
 
         """
         >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -102,4 +147,9 @@ if __name__ == "__main__":
 
         pygame.display.flip()  # 缓冲绘制到屏幕上
 
-        clock.tick(frame_rate)  # 设置刷新频率
+        if game_manager.scene == game_manager.scene_greedy_snake:
+            clock.tick(10)  # 设置刷新频率
+        else:
+            clock.tick(frame_rate1)  # 设置刷新频率
+
+pygame.quit()
