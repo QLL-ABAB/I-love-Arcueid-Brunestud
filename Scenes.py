@@ -302,6 +302,7 @@ class Scene_Forest(Listener):  # 场景类
             if (
                 not enemy1.rect.colliderect(self.rect_proof_rect)
                 and not enemy1.rect.colliderect(self.portal1.rect)
+                and not enemy1.rect.colliderect(self.portal3.rect)
                 and not collide_with_obstacles
                 and not collide_with_enemy1
             ):
@@ -384,9 +385,6 @@ class Scene_Forest(Listener):  # 场景类
         super().listen(event)
 
         keys = pygame.key.get_pressed()
-
-        # if event.code == Event_Code.WHETHER_TO_FIGHT_FALSE:  # 监听玩家按下键盘事件
-        #     self.whether_fight = False
 
         if event.code == Event_Code.REQUEST_MOVE:  # 监听玩家的移动请求事件
             can_move = 1

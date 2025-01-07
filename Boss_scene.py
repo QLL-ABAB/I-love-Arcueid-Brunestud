@@ -99,6 +99,10 @@ class Boss_Scene1(Listener):
         >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         """
 
+        self.portal1 = Fixed_portals(0)
+        self.portal2 = Fixed_portals(1)
+        self.portal3 = Fixed_portals(2)
+
     def listen(self, event: Event):  # 场景所监听的事件
         super().listen(event)
 
@@ -183,7 +187,7 @@ class Boss_Scene1(Listener):
             for tile in self.tiles:  # 遍历所有地图背景图块并描绘
                 tile.draw()
 
-            window.blit(self.player.image, self.player.rect)  # 描绘玩家图像
+            window.blit(self.player.image, self.player.rect)
 
             for i in range(self.player.hp):
                 hp = self.hp_showings[i]
@@ -230,7 +234,18 @@ class Boss_Scene1(Listener):
                     ),
                 )
 
+            self.portal_show()
             self.boss.draw()
+            self.boss.call_the_fellows()
+
             for bullet in self.player.player_bullets:  # 遍历所有玩家子弹并描绘
                 bullet.update()
                 bullet.draw()
+
+    def portal_show(self):
+        self.portal1.update()
+        self.portal2.update()
+        self.portal3.update()
+        self.portal1.draw()
+        self.portal2.draw()
+        self.portal3.draw()

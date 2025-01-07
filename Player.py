@@ -183,7 +183,7 @@ class Player_bullet(Fixed_object):
         super().__init__(None, None)
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.transform.scale(
-            pygame.image.load(r".\assets\boss_room\zhidan\player_bullet\1.png"),
+            pygame.image.load(Game_Path.bullet_path[3]),
             (50, 20),
         )
         self.bullet_speed = 20

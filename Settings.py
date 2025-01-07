@@ -17,6 +17,7 @@ class SceneSettings:
     burn_attribute_size = (5, 15)
     portal_pos = [(1000, 350), (150, 350)]  # 传送门的位置
     portal_size = (200, 300)  # 传送门的大小
+    portal_size2 = (150, 225)
     portal_speed = 0.2  # 传送门的冷却时间
     game_machine_pos = ((600, 450), (600, 150))
     game_machine_size = (84, 150)
@@ -63,7 +64,8 @@ class EnemySettings:
 
 
 class BossSettings:
-    boss_Speed = 6
+    boss_speed = 6
+    boss_bullet_speed = 25
     boss_width = 200
     boss_height = 160
     boss_hp = 40
@@ -72,6 +74,13 @@ class BossSettings:
     boss_attack = 1
     wlid_boss_pos0 = (1100, 370)  # boss的初始位置
     boss_animation_speed = 1
+
+
+class Fellow_Settings:
+    fellow_speed = 5
+    fellow_width = 80
+    fellow_height = 80
+    fellow_hp = 10
 
 
 class Scene_Code(Enum):
@@ -135,6 +144,10 @@ class Game_Path:
     coin_path = r".\assets\tiles\coin.png"
     shop_path = r".\assets\tiles\shop.png"
     hotel_path = r".\assets\tiles\hotel.png"
+    fellow_path = [
+        r".\assets\boss_room\boss_fellows\1.png",
+        r".\assets\boss_room\boss_fellows\2.png",
+    ]
 
     forest_tiles_path = [
         r".\assets\tiles\1.png",
@@ -261,6 +274,13 @@ class Game_Path:
         r".\assets\boss_room\alien\alien infected idle_5.png",
         r".\assets\boss_room\alien\alien infected idle_6.png",
         r".\assets\boss_room\alien\alien infected idle_7.png",
+    ]
+
+    bullet_path = [
+        r".\assets\boss_room\zhidan\boss_bullet1.png",
+        r".\assets\boss_room\zhidan\boss_bullet2.png",
+        r".\assets\boss_room\zhidan\fellow_bullet.png",
+        r".\assets\boss_room\zhidan\player_bullet.png",
     ]
 
     baozha_path = [
