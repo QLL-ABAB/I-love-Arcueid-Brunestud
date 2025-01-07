@@ -15,6 +15,7 @@ pygame.init()
 class Boss_Scene1(Listener):
     def __init__(self, player):
         super().__init__()
+
         self.boss = Boss1(None, None)
         self.tiles = []
         self.hp_showings = []
@@ -36,20 +37,20 @@ class Boss_Scene1(Listener):
         self.first_add4 = True
 
         self.attack_showing = Attribute_showing(
-            10, pygame.Rect(40, 120, self.attribute_size * 2, self.attribute_size * 2)
+            10, pygame.Rect(40, 60, self.attribute_size * 2, self.attribute_size * 2)
         )
 
         self.blood_eat = Attribute_showing(
-            6, pygame.Rect(10, 140, self.attribute_size * 2, self.attribute_size * 2)
+            6, pygame.Rect(10, 100, self.attribute_size * 2, self.attribute_size * 2)
         )
         self.skill = Attribute_showing(
-            14, pygame.Rect(10, 140, self.attribute_size * 2, self.attribute_size * 2)
+            14, pygame.Rect(10, 100, self.attribute_size * 2, self.attribute_size * 2)
         )
         self.through = Attribute_showing(
-            12, pygame.Rect(10, 140, self.attribute_size * 2, self.attribute_size * 2)
+            12, pygame.Rect(10, 100, self.attribute_size * 2, self.attribute_size * 2)
         )
         self.add_bullet_speed = Attribute_showing(
-            13, pygame.Rect(10, 140, self.attribute_size * 2, self.attribute_size * 2)
+            13, pygame.Rect(10, 100, self.attribute_size * 2, self.attribute_size * 2)
         )
 
         """
@@ -65,16 +66,16 @@ class Boss_Scene1(Listener):
         for i in range(21):
             hp = Attribute_showing(
                 0,
-                pygame.Rect(i * 25 + 40, 80, self.attribute_size, self.attribute_size),
+                pygame.Rect(i * 25 + 40, 20, self.attribute_size, self.attribute_size),
             )
             self.hp_showings.append(hp)
 
-        for i in range(5):
+        for i in range(4):
             wall = Shelt(pygame.Rect(500, 120 + i * 40, 40, 40))
             self.walls_collision.append(wall)
 
-        for i in range(5):
-            wall = Shelt(pygame.Rect(500, 500 + i * 40, 40, 40))
+        for i in range(4):
+            wall = Shelt(pygame.Rect(500, 540 + i * 40, 40, 40))
             self.walls_collision.append(wall)
 
         for i in range(self.window_scale[0] // 40 + 1):
@@ -92,7 +93,7 @@ class Boss_Scene1(Listener):
         for i in range(41):
             blood = Attribute_showing(
                 8,
-                pygame.Rect(i * 18 + 300, 30, 18, 40),
+                pygame.Rect(i * 18 + 300, 10, 18, 40),
             )
             self.blood_showings.append(blood)
         """
@@ -170,6 +171,16 @@ class Boss_Scene1(Listener):
                             if bullet.rect.colliderect(wall.rect):
                                 bullet.kill()
 
+                    for fellow in self.boss.fellow1s:
+                        if bullet.rect.colliderect(fellow.rect):
+                            fellow.hp -= self.player.attack
+                            bullet.kill()
+
+                    for fellow in self.boss.fellow2s:
+                        if bullet.rect.colliderect(fellow.rect):
+                            fellow.hp -= self.player.attack
+                            bullet.kill()
+
                     if bullet.rect.colliderect(self.boss.rect):
                         self.boss.hp -= self.player.attack
                         bullet.kill()
@@ -178,10 +189,27 @@ class Boss_Scene1(Listener):
                             if a == 1 and self.player.hp < 20:
                                 self.player.hp += 1
 
+                for fellow in self.boss.fellow1s:
+                    for bullet in fellow.fellow_bullets:
+                        if bullet.rect.colliderect(self.player.rect):
+                            if self.player.hp > 0:
+                                self.player.hp -= 1
+                                self.post(Event(Event_Code.HURT))
+                                bullet.kill()
+
+                for fellow in self.boss.fellow2s:
+                    for bullet in fellow.fellow_bullets:
+                        if bullet.rect.colliderect(self.player.rect):
+                            if self.player.hp > 0:
+                                self.player.hp -= 1
+                                self.post(Event(Event_Code.HURT))
+                                bullet.kill()
+
+            # 被黑洞吸入
+
             """
             >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
             """
-
         if event.code == Event_Code.DRAW:  # DRAW事件，用于描绘场景中的实体
 
             for tile in self.tiles:  # 遍历所有地图背景图块并描绘
@@ -189,23 +217,15 @@ class Boss_Scene1(Listener):
 
             window.blit(self.player.image, self.player.rect)
 
-            for i in range(self.player.hp):
-                hp = self.hp_showings[i]
-                window.blit(hp.image, hp.rect)
-
             for wall in self.walls:  # 遍历所有墙并描绘
                 wall.draw()
 
             for wall in self.walls_collision:  # 遍历所有墙并描绘
                 wall.draw()
 
-            for i in range(self.boss.hp):
-                blood = self.blood_showings[i]
-                window.blit(blood.image, blood.rect)
-
             window.blit(self.attack_showing.image, self.attack_showing.rect)
             attack_num = font1.render(str(self.player.attack), True, (255, 255, 255))
-            window.blit(attack_num, (85, 120))
+            window.blit(attack_num, (85, 60))
 
             if self.player.skill == True and self.first_add1 == True:
                 self.skills.append(self.skill)
@@ -228,7 +248,7 @@ class Boss_Scene1(Listener):
                     ),
                     pygame.Rect(
                         40 + i * 50,
-                        200,
+                        100,
                         self.attribute_size * 2,
                         self.attribute_size * 2,
                     ),
@@ -236,11 +256,18 @@ class Boss_Scene1(Listener):
 
             self.portal_show()
             self.boss.draw()
-            self.boss.call_the_fellows()
 
             for bullet in self.player.player_bullets:  # 遍历所有玩家子弹并描绘
                 bullet.update()
                 bullet.draw()
+
+            for i in range(self.boss.hp):
+                blood = self.blood_showings[i]
+                window.blit(blood.image, blood.rect)
+
+            for i in range(self.player.hp):
+                hp = self.hp_showings[i]
+                window.blit(hp.image, hp.rect)
 
     def portal_show(self):
         self.portal1.update()

@@ -59,6 +59,14 @@ class Boss1(Fixed_object):
         self.fellow1s = pygame.sprite.Group()
         self.fellow2s = pygame.sprite.Group()
 
+    def call_the_fellows(self):
+        if self.hp > 0:
+            random_num = random.randint(1, 20)
+            if random_num == 2 and len(self.fellow1s) <= 6:
+                self.fellow1s.add(Fellows(0))
+            if random_num == 4 and len(self.fellow2s) <= 6:
+                self.fellow2s.add(Fellows(1))
+
     def listen(self, event: Event):
 
         if event.code == Event_Code.BOSS_ANIMATIOM:
@@ -68,6 +76,11 @@ class Boss1(Fixed_object):
                 self.move_num = 0
                 self.move_x = random.uniform(-1, 1)
                 self.move_y = random.uniform(-1, 1)
+                self.call_the_fellows()
+                for fellow in self.fellow1s:
+                    fellow.change_speed()
+                for fellow in self.fellow2s:
+                    fellow.change_speed()
 
             if self.hp > 0:
                 # if  self.rect.top >= self.move_region[1][0] + self.speed:
@@ -124,21 +137,13 @@ class Boss1(Fixed_object):
         )  # 切换图片
 
     def auto_fire(self):  # 随机攻击
-        if random.randint(1, 10) == 8:
+        if random.randint(1, 20) == 8:
             bullet = Boss_attack(self.rect)
             self.boss_bullets.add(bullet)
 
         if random.randint(1, 40) == 8:
             bullet1 = Boss_attack1(self.rect)
             self.boss_bullets1.add(bullet1)
-
-    def call_the_fellows(self):
-        if self.hp > 0:
-            random_num = random.randint(1, 10)
-            if random_num == 2:
-                self.fellow1s.add(Fellows(0))
-            if random_num == 4:
-                self.fellow2s.add(Fellows(1))
 
     def draw(self):
         super().draw()
@@ -151,11 +156,21 @@ class Boss1(Fixed_object):
             bullet.draw()
 
         for fellow in self.fellow1s:
-            fellow.auto_fire()
+            if fellow.hp > 0:
+
+                fellow.auto_move()
+                fellow.auto_fire()
+                window.blit(fellow.image, fellow.rect)
+            fellow.update()
             fellow.draw()
 
         for fellow in self.fellow2s:
-            fellow.auto_fire()
+            if fellow.hp > 0:
+
+                fellow.auto_move()
+                fellow.auto_fire()
+                window.blit(fellow.image, fellow.rect)
+            fellow.update()
             fellow.draw()
 
 
@@ -199,22 +214,62 @@ class Fellows(Fixed_object):
         self.height = Fellow_Settings.fellow_height
         self.type = type
         self.image = pygame.transform.scale(
-            pygame.image.load(Game_Path.fellow_path[self.type]),
+            pygame.image.load(Game_Path.fellow_path[0]),
             (self.width, self.height),
         )
-        self.rect = pygame.rect.Rect(1300, 200, self.width, self.height)
+
+        self.rect = self.image.get_rect(
+            center=(
+                1280,
+                150 + 280 * self.type,
+            )
+        )
+
         self.fellow_bullets = pygame.sprite.Group()
+        self.speed_y = 0
+
+        self.count_num = 0
+
+    def change_speed(self):
+        self.speed_y = random.uniform(-1, 1)
+
+    def auto_move(self):
+        if self.rect.left >= 0:
+            self.rect.left -= 2
+        if self.rect.left >= 650:
+            if (self.rect.center[1] + self.speed_y * 5) >= 60 and (
+                self.rect.center[1] + self.speed_y * 5
+            ) <= 880:
+                self.rect.top += self.speed_y * 5
+
+        if self.rect.left < 650 and self.rect.left > 520:
+            cha = min(
+                abs(self.rect.center[1] - 50),
+                abs(self.rect.center[1] - 400),
+                abs(self.rect.center[1] - 770),
+            )
+            if cha == abs(self.rect.center[1] - 50):
+                self.rect.top += (50 - self.rect.center[1]) / 55 * 1
+            elif cha == abs(self.rect.center[1] - 400):
+                self.rect.top += (400 - self.rect.center[1]) / 55 * 1
+            elif cha == abs(self.rect.center[1] - 770):
+                self.rect.top += (770 - self.rect.center[1]) / 55 * 1
 
     def auto_fire(self):  # 随机攻击
-        if random.randint(1, 20) == 8:
+        self.count_num += 1
+        if self.count_num >= 100:
+            self.count_num = 0
             bullet = Fellow_attack(self.rect)
             self.fellow_bullets.add(bullet)
 
     def draw(self):
-        super().draw()
         for bullet in self.fellow_bullets:
             bullet.update()
             bullet.draw()
+
+    def update(self):
+        if self.rect.left <= 10:
+            self.kill()
 
 
 class Fellow_attack(Fixed_object):
@@ -224,10 +279,10 @@ class Fellow_attack(Fixed_object):
         self.image = pygame.transform.scale(
             pygame.image.load(Game_Path.bullet_path[2]), (40, 40)
         )
-        self.bullet_speed = BossSettings.boss_bullet_speed
-        self.rect = pygame.Rect(rect[0] - 20, rect[1] + 80, 60, 50)
+        self.bullet_speed = Fellow_Settings.fellow_bullet_speed
+        self.rect = pygame.Rect(rect[0], rect[1] + 5, 60, 50)
 
     def update(self):
         self.rect.left -= self.bullet_speed
-        if self.rect.left <= -10:
+        if self.rect.left <= -8:
             self.kill()

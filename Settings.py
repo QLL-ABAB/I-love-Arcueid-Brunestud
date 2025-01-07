@@ -78,9 +78,10 @@ class BossSettings:
 
 class Fellow_Settings:
     fellow_speed = 5
-    fellow_width = 80
-    fellow_height = 80
+    fellow_width = 40
+    fellow_height = 40
     fellow_hp = 10
+    fellow_bullet_speed = 5
 
 
 class Scene_Code(Enum):

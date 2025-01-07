@@ -39,7 +39,7 @@ class Fixed_portals(Fixed_object):
         self.rect = self.image.get_rect(
             center=(
                 1280,
-                110 + 320 * type,
+                150 + 280 * type,
             )
         )
         self.num_portal = 0
