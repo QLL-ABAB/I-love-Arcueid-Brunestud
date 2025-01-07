@@ -147,9 +147,6 @@ if __name__ == "__main__":
 
         pygame.display.flip()  # 缓冲绘制到屏幕上
 
-        if game_manager.scene == game_manager.scene_greedy_snake:
-            clock.tick(10)  # 设置刷新频率
-        else:
-            clock.tick(frame_rate1)  # 设置刷新频率
+        clock.tick(frame_rate1)  # 设置刷新频率
 
 pygame.quit()

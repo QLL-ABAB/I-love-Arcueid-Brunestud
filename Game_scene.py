@@ -21,7 +21,7 @@ class Greedy_snake(Listener):
         self.snake_length = 1
         self.snake_x = 700
         self.snake_y = 360
-        # self.run_num = 0
+        self.run_num = 0
 
         self.food_x = (
             round(
@@ -97,12 +97,22 @@ class Greedy_snake(Listener):
             window.fill((255, 255, 255))
             coin_num = font1.render("Coins: " + str(self.player.coin), True, (0, 0, 0))
             window.blit(coin_num, (20, 20))
-            # self.run_num += 1
+            self.run_num += 1
 
-            # if self.run_num >= 20:
-            #     self.run_num = 0
-            self.snake_x += self.x_change
-            self.snake_y += self.y_change
+            if self.run_num >= 20:
+                self.run_num = 0
+                self.snake_x += self.x_change
+                self.snake_y += self.y_change
+                snake_head = []
+                snake_head.append(self.snake_x)
+                snake_head.append(self.snake_y)
+                self.snake_list.append(snake_head)
+                if len(self.snake_list) > self.snake_length:
+                    del self.snake_list[0]
+
+                for x in self.snake_list[:-1]:
+                    if x == snake_head:
+                        self.game_close = True
 
             if (
                 self.snake_x >= WindowSettings.width
@@ -123,17 +133,16 @@ class Greedy_snake(Listener):
                 ],
             )
 
-            snake_head = []
-            snake_head.append(self.snake_x)
-            snake_head.append(self.snake_y)
-            self.snake_list.append(snake_head)
-            if len(self.snake_list) > self.snake_length:
+            # snake_head = []
+            # snake_head.append(self.snake_x)
+            # snake_head.append(self.snake_y)
+            # self.snake_list.append(snake_head)
+            # if len(self.snake_list) > self.snake_length:
+            #     del self.snake_list[0]
 
-                del self.snake_list[0]
-
-            for x in self.snake_list[:-1]:
-                if x == snake_head:
-                    self.game_close = True
+            # for x in self.snake_list[:-1]:
+            #     if x == snake_head:
+            #         self.game_close = True
 
             for x in self.snake_list:
                 pygame.draw.rect(
