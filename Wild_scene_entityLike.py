@@ -54,3 +54,14 @@ class Enemy(EntityLike):
             pygame.image.load(Game_Path.enemy_path[num]), (self.width, self.height)
         )
         self.rect = rect
+
+
+class Water(EntityLike):
+    def __init__(self, rect: pygame.rect.Rect):
+        super().__init__(
+            image=pygame.transform.scale(
+                pygame.image.load(Game_Path.forest_tiles_path[6]),
+                (SceneSettings.tile_size, SceneSettings.tile_size),
+            ),
+            rect=rect,
+        )

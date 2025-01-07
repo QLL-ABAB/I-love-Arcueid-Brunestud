@@ -147,5 +147,19 @@ class GameManager(Listener):
             time.sleep(0.5)
 
         if event.code == Scene_Code.FRESH_ENEMY:
-            pass
+            self.scene_forest = Scene_Forest(self.mob)
+            self.scenes = [
+                self.scene_beginning,
+                self.scene_forest,
+                self.scene_city,
+                self.scene_ending,
+                self.scene_boss,
+                self.scene_win,
+                self.scene_shop,
+                self.scene_greedy_snake,
+                self.scene_game1_over,
+                self.scene_fight1,
+                self.scene_fight2,
+            ]
+            time.sleep(0.5)
             # self.scene_forest = Scene_Forest(self.mob)

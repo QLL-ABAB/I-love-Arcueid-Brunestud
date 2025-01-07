@@ -78,6 +78,9 @@ class Scene_Forest(Listener):  # 场景类
             self.player.rect.centery,
         )
 
+        self.water = set()
+        self.water_tiles = []
+
         """
         >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         """
@@ -143,6 +146,33 @@ class Scene_Forest(Listener):  # 场景类
                     )
                 )
 
+        for _ in range(3):
+            i = random.randint(3, self.map_range[0] // 40 - 2)
+            j = random.randint(3, self.map_range[1] // 40 - 2)
+            self.water.add((i, j))
+            judge = random.randint(0, 3)
+            if judge == 0:
+                n = 8
+            elif judge == 1:
+                n = 10
+            else:
+                n = 9
+            for _ in range(n):
+                judge2 = random.randint(0, 1)
+                if judge2 == 0:
+                    di = 0
+                    dj = random.choice([-1, 1])
+                else:
+                    di = random.choice([-1, 1])
+                    dj = 0
+                i = i + di
+                j = j + dj
+                self.water.add((i, j))
+
+        for water in self.water:
+            water_tile = Water(pygame.Rect(water[0] * 40, water[1] * 40, 40, 40))
+            self.water_tiles.append(water_tile)
+
         # 在地图里随机生成一些障碍物
         for _ in range(20):
             tree = Tree(
@@ -153,10 +183,22 @@ class Scene_Forest(Listener):  # 场景类
                     40,
                 )
             )
+            collide_with_water = False
+            for water in self.water_tiles:
+                if tree.rect.colliderect(water.rect):
+                    collide_with_water = True
+
+            collide_with_tree = False
+            for t in self.trees:
+                if tree.rect.colliderect(t.rect):
+                    collide_with_tree = True
+
             if (
                 not tree.rect.colliderect(self.rect_proof_rect)
                 and not tree.rect.colliderect(self.portal1.rect)
                 and not tree.rect.colliderect(self.portal3.rect)
+                and not collide_with_water
+                and not collide_with_tree
             ):
                 self.trees.append(tree)
 
@@ -171,16 +213,28 @@ class Scene_Forest(Listener):  # 场景类
                 self.player,
             )
 
+            collide_with_water = False
+            for water in self.water_tiles:
+                if fire.rect.colliderect(water.rect):
+                    collide_with_water = True
+
             collide_with_tree = False
             for tree in self.trees:
                 if fire.rect.colliderect(tree.rect):
                     collide_with_tree = True
+
+            collide_with_fire = False
+            for f in self.fires:
+                if fire.rect.colliderect(f.rect):
+                    collide_with_fire = True
 
             if (
                 not fire.rect.colliderect(self.rect_proof_rect)
                 and not fire.rect.colliderect(self.portal1.rect)
                 and not fire.rect.colliderect(self.portal3.rect)
                 and not collide_with_tree
+                and not collide_with_water
+                and not collide_with_fire
             ):
                 self.fires.append(fire)
 
@@ -212,6 +266,10 @@ class Scene_Forest(Listener):  # 场景类
 
             for fire in self.fires:
                 if enemy2.rect.colliderect(fire.rect):
+                    collide_with_obstacles = True
+
+            for water in self.water_tiles:
+                if enemy2.rect.colliderect(water.rect):
                     collide_with_obstacles = True
 
             collide_with_enemy2 = False
@@ -250,6 +308,10 @@ class Scene_Forest(Listener):  # 场景类
 
             for fire in self.fires:
                 if enemy2.rect.colliderect(fire.rect):
+                    collide_with_obstacles = True
+
+            for water in self.water_tiles:
+                if enemy2.rect.colliderect(water.rect):
                     collide_with_obstacles = True
 
             collide_with_enemy2 = False
@@ -294,6 +356,10 @@ class Scene_Forest(Listener):  # 场景类
                 if enemy1.rect.colliderect(e2.rect):
                     collide_with_obstacles = True
 
+            for water in self.water_tiles:
+                if enemy1.rect.colliderect(water.rect):
+                    collide_with_obstacles = True
+
             collide_with_enemy1 = False
             for e1 in self.enemy1s:
                 if enemy1.rect.colliderect(e1.rect):
@@ -330,6 +396,14 @@ class Scene_Forest(Listener):  # 场景类
 
             for fire in self.fires:
                 if enemy1.rect.colliderect(fire.rect):
+                    collide_with_obstacles = True
+
+            for e2 in self.enemy2s:
+                if enemy1.rect.colliderect(e2.rect):
+                    collide_with_obstacles = True
+
+            for water in self.water_tiles:
+                if enemy1.rect.colliderect(water.rect):
                     collide_with_obstacles = True
 
             collide_with_enemy1 = False
@@ -435,6 +509,9 @@ class Scene_Forest(Listener):  # 场景类
 
             for tree in self.trees:  # 遍历所有障碍物并描绘
                 tree.draw(self.camera)
+
+            for water in self.water_tiles:  # 遍历所有水并描绘
+                water.draw(self.camera)
 
             for fire in self.fires:  # 遍历所有火焰并描绘
                 fire.draw(self.camera)
