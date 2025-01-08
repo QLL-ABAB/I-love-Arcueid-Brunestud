@@ -69,6 +69,10 @@ class Scene_Forest(Listener):  # 场景类
             17, pygame.Rect(5, 180, self.attribute_size * 2, self.attribute_size * 2)
         )
 
+        """
+        >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        """  # 看这里 （定义的水瓶有关的变量） （可以自己加更多的变量）
+
         self.get_water = Attribute_showing(18, pygame.Rect(1150, 710, 150, 150))
         self.can_get_water = False
         self.take_water_with = False
@@ -79,6 +83,9 @@ class Scene_Forest(Listener):  # 场景类
 
         self.shoot_target = Attribute_showing(20, pygame.Rect(1050, 790, 60, 60))
         self.ready_to_shoot = False
+        """
+        >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        """
 
         self.skills = []
         self.first_add1 = True
@@ -662,7 +669,9 @@ class Scene_Forest(Listener):  # 场景类
                         elif self.can_get_water:
                             self.take_water_with = True
                             self.can_get_water = False
-
+                    """
+                    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                    """  # 看这里
                     if self.ready_to_shoot:
                         pass
 

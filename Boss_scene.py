@@ -43,9 +43,16 @@ class Boss_Scene1(Listener):
         self.blood_eat = Attribute_showing(
             6, pygame.Rect(10, 100, self.attribute_size * 2, self.attribute_size * 2)
         )
+
         self.skill = Attribute_showing(
             14, pygame.Rect(10, 100, self.attribute_size * 2, self.attribute_size * 2)
         )
+        self.energy_enough = False
+        self.shoot_sword = False
+        self.energy_num = 0
+        self.hold_time = 0
+        self.sword_light = Sword_light(pygame.Rect(100, 100, 10, 30), 0)  # 光剑
+
         self.through = Attribute_showing(
             12, pygame.Rect(10, 100, self.attribute_size * 2, self.attribute_size * 2)
         )
@@ -132,6 +139,9 @@ class Boss_Scene1(Listener):
 
             if can_move:
                 self.post(Event(Event_Code.CAN_MOVE, event.body))
+        """
+        >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        """  # 被黑洞吸入
 
         if self.player.rect.center[0] >= 1200:
             cha = min(
@@ -162,9 +172,10 @@ class Boss_Scene1(Listener):
                     self.grab_num = 0
                     self.post(Event(Event_Code.HURT))
 
-            """
-            》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》
-            """
+        """
+        >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        """  # Boss 子弹效果
+
         for bullet in self.boss.boss_bullets:
             if bullet.rect.colliderect(self.player.rect):
                 if self.player.hp > 0:
@@ -195,7 +206,8 @@ class Boss_Scene1(Listener):
 
             """
             >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-            """
+            """  # 玩家子弹效果
+
         if self.boss.hp > 0:
             for bullet in self.player.player_bullets:
                 if not self.player.through:
@@ -233,6 +245,24 @@ class Boss_Scene1(Listener):
                         if a == 1 and self.player.hp < 20:
                             self.player.hp += 1
 
+            """
+            >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+            """  # 光剑制作
+            if self.player.skill == True:
+                if keys[pygame.K_SPACE] and self.energy_enough:
+                    self.hold_time += 1
+                    pass
+                elif self.hold_time != 0:
+                    self.shoot_sword = True
+
+            if self.shoot_sword:
+                self.sword_light = Sword_light(self.player.rect, self.hold_time)
+
+                pass
+            """
+            >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+            """  # 小敌人子弹效果
+
             for fellow in self.boss.fellow1s:
                 for bullet in fellow.fellow_bullets:
                     if bullet.rect.colliderect(self.player.rect):
@@ -248,8 +278,6 @@ class Boss_Scene1(Listener):
                             self.player.hp -= 1
                             self.post(Event(Event_Code.HURT))
                             bullet.kill()
-
-            # 被黑洞吸入
 
             """
             >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

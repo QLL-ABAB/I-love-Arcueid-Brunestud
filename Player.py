@@ -43,9 +43,6 @@ class Player1(EntityLike):  # 玩家类
         if event.code == pygame.KEYDOWN:  # 键盘按下事件
             self.keydown()
 
-        # elif event.code == Scene_Code.GAME_BEGIN:
-        #     self.speed = PlayerSettings.player_Speed  # 重置玩家速度
-
         elif event.code == Event_Code.CAN_MOVE:  # 响应场景发出的允许移动事件
             self.rect.x = event.body["POS"][0]
             self.rect.y = event.body["POS"][1]
@@ -88,6 +85,9 @@ class Player1(EntityLike):  # 玩家类
                     self.post(Event(Event_Code.DIE))
                     self.post(Event(Event_Code.DRAW))
 
+        elif event.code == Scene_Code.CITY:
+            self.burn = 0  # 重置燃烧效果
+
         elif event.code == Event_Code.HURT:
             if self.hp > 0:
                 copy_player = copy.copy(self.image)
@@ -96,9 +96,6 @@ class Player1(EntityLike):  # 玩家类
             else:
                 self.post(Event(Event_Code.DIE))
                 self.post(Event(Event_Code.DRAW))
-
-        elif event.code == Scene_Code.CITY:
-            self.burn = 0  # 重置燃烧效果
 
         super().listen(event)  # 继承原有的响应事件内容，如对DRAW的响应
 
@@ -192,6 +189,25 @@ class Player_bullet(Fixed_object):
         )
         self.bullet_speed = 20
         self.rect = pygame.Rect(rect[0] + 10, rect[1] + 30, 20, 20)
+
+    def update(self):
+        self.rect.right += self.bullet_speed
+        if self.rect.right >= 1450:
+            self.kill()
+
+
+class Sword_light(Fixed_object):
+    def __init__(self, rect, hold_time: int):
+        super().__init__(None, None)
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.transform.scale(
+            pygame.image.load(Game_Path.bullet_path[0]),
+            (50, 20),
+        )
+        self.bullet_speed = 10
+        self.rect = pygame.Rect(
+            rect[0] + 10, rect[1] + 30, 10 + hold_time, 30 + hold_time * 3
+        )
 
     def update(self):
         self.rect.right += self.bullet_speed
