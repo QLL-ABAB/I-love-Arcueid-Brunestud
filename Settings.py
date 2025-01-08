@@ -222,6 +222,9 @@ class Game_Path:
         r".\assets\player\bottle.png",  # 16
         r".\assets\player\water_bottle.png",  # 17
         r".\assets\player\get_water.png",  # 18
+        r".\assets\player\shoot.png",  # 19
+        r".\assets\player\target.png",  # 20
+        r".\assets\player\bg.png",  # 21
     ]
 
     game_machine_path = r".\assets\tiles\game_machine.jpg"

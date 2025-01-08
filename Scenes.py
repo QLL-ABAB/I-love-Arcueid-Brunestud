@@ -63,11 +63,22 @@ class Scene_Forest(Listener):  # 场景类
         )
 
         self.bottle = Attribute_showing(
-            16, pygame.Rect(5, 180, self.attribute_size, self.attribute_size)
+            16, pygame.Rect(5, 180, self.attribute_size * 2, self.attribute_size * 2)
+        )
+        self.water_bottle = Attribute_showing(
+            17, pygame.Rect(5, 180, self.attribute_size * 2, self.attribute_size * 2)
         )
 
         self.get_water = Attribute_showing(18, pygame.Rect(1150, 710, 150, 150))
         self.can_get_water = False
+        self.take_water_with = False
+        self.bottle_num = 0
+
+        self.shoot = Attribute_showing(19, pygame.Rect(1060, 800, 80, 80))
+        self.shoot_bg = Attribute_showing(21, pygame.Rect(1045, 785, 110, 110))
+
+        self.shoot_target = Attribute_showing(20, pygame.Rect(1050, 790, 60, 60))
+        self.ready_to_shoot = False
 
         self.skills = []
         self.first_add1 = True
@@ -77,9 +88,7 @@ class Scene_Forest(Listener):  # 场景类
 
         self.rect_proof = pygame.Surface((100, 100))
         self.rect_proof.fill((255, 255, 255))
-        self.rect_proof.set_alpha(
-            200
-        )  # 电风扇发的范德萨发顺丰方法说法fnjsfkfjmkfslfflfsfsldfsdk
+        self.rect_proof.set_alpha(200)
         self.rect_proof_rect = self.rect_proof.get_rect()
         self.rect_proof_rect.center = (
             self.player.rect.centerx,
@@ -592,20 +601,70 @@ class Scene_Forest(Listener):  # 场景类
             """  # 水瓶
 
             if self.player.bottle:
-                window.blit(
-                    pygame.transform.scale(
-                        self.bottle.image,
-                        (self.attribute_size * 2, self.attribute_size * 2),
-                    ),
-                    self.bottle.rect,
-                )
 
-            for water in self.water_tiles:
-                if self.player.rect.colliderect(water.rect):
-                    self.can_get_water = True
+                if self.bottle_num <= 15:
+                    self.bottle_num += 1
 
-            if self.can_get_water:
-                window.blit(self.get_water.image, self.get_water.rect)
+                # 左上角图标显示
+                if not self.take_water_with:
+                    window.blit(
+                        pygame.transform.scale(
+                            self.bottle.image,
+                            (self.attribute_size * 2, self.attribute_size * 2),
+                        ),
+                        self.bottle.rect,
+                    )
+                else:
+                    window.blit(
+                        pygame.transform.scale(
+                            self.water_bottle.image,
+                            (self.attribute_size * 2, self.attribute_size * 2),
+                        ),
+                        self.water_bottle.rect,
+                    )
+
+                # 判断能否加水
+                for water in self.water_tiles:
+                    if (
+                        self.player.rect.colliderect(water.rect)
+                        and not self.take_water_with
+                    ):
+                        self.can_get_water = True
+
+                if self.can_get_water or self.take_water_with:
+                    window.blit(self.get_water.image, self.get_water.rect)
+                    mouse_get_pressed = pygame.mouse.get_pressed()
+                    mouse_pos = pygame.mouse.get_pos()
+
+                    if self.take_water_with:
+                        window.blit(self.shoot.image, self.shoot.rect)
+                        window.blit(self.shoot_bg.image, self.shoot_bg.rect)
+                        if (
+                            self.shoot.rect.collidepoint(mouse_pos)
+                            and mouse_get_pressed[0]
+                            and self.bottle_num >= 15
+                        ):
+                            self.bottle_num = 0
+                            if not self.ready_to_shoot:
+                                self.ready_to_shoot = True
+                            if self.ready_to_shoot:
+                                self.ready_to_shoot = False
+
+                    if (
+                        self.get_water.rect.collidepoint(mouse_pos)
+                        and mouse_get_pressed[0]
+                        and self.bottle_num >= 15
+                    ):
+                        self.bottle_num = 0
+                        if self.take_water_with:
+                            self.take_water_with = False
+
+                        elif self.can_get_water:
+                            self.take_water_with = True
+                            self.can_get_water = False
+
+                    if self.ready_to_shoot:
+                        pass
 
             """
             >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
