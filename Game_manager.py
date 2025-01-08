@@ -45,7 +45,7 @@ class GameManager(Listener):
         self.scene_fight2 = Scene_Fight(self.mob, 2)
         self.judge_first_time = True
         self.scene_mine_sweeping = Mine_sweeping(self.mob)
-        self.scene_game2_over = Game1_Over(self.mob)
+        self.scene_game2_over = Game2_Over(self.mob)
 
         self.scenes = [
             self.scene_beginning,
@@ -154,7 +154,7 @@ class GameManager(Listener):
             time.sleep(0.5)
 
         if event.code == Scene_Code.GAME_MINE_SWEEPING:
-            self.scene = self.scenes[11]  # 贪吃蛇场景
+            self.scene = self.scenes[11]  # 扫雷场景
             time.sleep(0.5)
 
         if event.code == Scene_Code.GAME2_OVER:
