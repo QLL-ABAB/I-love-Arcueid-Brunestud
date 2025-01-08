@@ -78,7 +78,10 @@ class Scene_Forest(Listener):  # 场景类
             self.player.rect.centery,
         )
 
-        self.water = set()
+        self.water1 = set()
+        self.water2 = set()
+        self.water3 = set()
+        self.water = [self.water1, self.water2, self.water3]
         self.water_tiles = []
 
         """
@@ -146,17 +149,17 @@ class Scene_Forest(Listener):  # 场景类
                     )
                 )
 
-        for _ in range(3):
-            i = random.randint(3, self.map_range[0] // 40 - 2)
-            j = random.randint(3, self.map_range[1] // 40 - 2)
-            self.water.add((i, j))
+        for k in range(3):
+            i = random.randint(1, self.map_range[0] // 40 - 1)
+            j = random.randint(1, self.map_range[1] // 40 - 1)
+            self.water[k].add((i, j))
             judge = random.randint(0, 3)
             if judge == 0:
-                n = 8
-            elif judge == 1:
-                n = 10
-            else:
                 n = 9
+            elif judge == 1:
+                n = 11
+            else:
+                n = 10
             for _ in range(n):
                 judge2 = random.randint(0, 1)
                 if judge2 == 0:
@@ -165,13 +168,18 @@ class Scene_Forest(Listener):  # 场景类
                 else:
                     di = random.choice([-1, 1])
                     dj = 0
-                i = i + di
-                j = j + dj
-                self.water.add((i, j))
+                basis = random.choice(list(self.water[k]))
+                b1, b2 = basis
+                i = b1 + di
+                j = b2 + dj
+                self.water[k].add((i, j))
 
         for water in self.water:
-            water_tile = Water(pygame.Rect(water[0] * 40, water[1] * 40, 40, 40))
-            self.water_tiles.append(water_tile)
+            for water_pos in water:
+                water_tile = Water(
+                    pygame.Rect(water_pos[0] * 40, water_pos[1] * 40, 40, 40)
+                )
+                self.water_tiles.append(water_tile)
 
         # 在地图里随机生成一些障碍物
         for _ in range(20):

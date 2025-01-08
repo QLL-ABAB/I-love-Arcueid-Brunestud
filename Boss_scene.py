@@ -103,13 +103,16 @@ class Boss_Scene1(Listener):
         self.portal1 = Fixed_portals(0)
         self.portal2 = Fixed_portals(1)
         self.portal3 = Fixed_portals(2)
+        self.grab_num = 0
 
     def listen(self, event: Event):  # 场景所监听的事件
         super().listen(event)
 
         keys = pygame.key.get_pressed()
 
-        if event.code == Event_Code.REQUEST_MOVE:  # 监听玩家的移动请求事件
+        if (
+            event.code == Event_Code.REQUEST_MOVE and self.player.rect.center[0] <= 1200
+        ):  # 监听玩家的移动请求事件
             can_move = 1
             target_rect = pygame.Rect(
                 event.body["POS"][0],
@@ -130,80 +133,121 @@ class Boss_Scene1(Listener):
             if can_move:
                 self.post(Event(Event_Code.CAN_MOVE, event.body))
 
+        if self.player.rect.center[0] >= 1200:
+            cha = min(
+                abs(self.player.rect.top - 100),
+                abs(self.player.rect.top - 380),
+                abs(self.player.rect.top - 660),
+            )
+
+            if cha == abs(self.player.rect.top - 100):
+                self.player.rect.top = (
+                    self.player.rect.top + (100 - self.player.rect.top) / 50 * 1
+                )
+            elif cha == abs(self.player.rect.top - 380):
+                self.player.rect.top = (
+                    380 - self.player.rect.top
+                ) / 50 * 1 + self.player.rect.top
+            elif cha == abs(self.player.rect.top - 660):
+                self.player.rect.top = (
+                    660 - self.player.rect.top
+                ) / 50 * 1 + self.player.rect.top
+
+            self.player.rect.left += (1320 - self.player.rect.right) / 55 * 1
+
+            if self.player.rect.right >= 1250:
+                self.grab_num += 1
+                if self.grab_num >= 100:
+                    self.player.hp -= 1
+                    self.grab_num = 0
+                    self.post(Event(Event_Code.HURT))
+
             """
             》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》
             """
-            for bullet in self.boss.boss_bullets:
-                if bullet.rect.colliderect(self.player.rect):
-                    if self.player.hp > 0:
-                        self.player.hp -= 1
-                        self.post(Event(Event_Code.HURT))
-                        bullet.kill()
-                    # if self.player.hp <= 0:
-                    #     self.post(Event(Event_Code.DIE))
-                    #     self.post(Event(Event_Code.DRAW))
+        for bullet in self.boss.boss_bullets:
+            if bullet.rect.colliderect(self.player.rect):
+                if self.player.hp > 0:
+                    self.player.hp -= 1
+                    self.post(Event(Event_Code.HURT))
+                    bullet.kill()
+                # if self.player.hp <= 0:
+                #     self.post(Event(Event_Code.DIE))
+                #     self.post(Event(Event_Code.DRAW))
 
-                for wall in self.walls_collision:
-                    if bullet.rect.colliderect(wall.rect):
-                        bullet.kill()
+            for wall in self.walls_collision:
+                if bullet.rect.colliderect(wall.rect):
+                    bullet.kill()
 
-            for bullet in self.boss.boss_bullets1:
-                if bullet.rect.colliderect(self.player.rect):
-                    if self.player.hp > 0:
-                        self.player.hp -= 2
-                        self.post(Event(Event_Code.HURT))
-                        bullet.kill()
-                    # if self.player.hp <= 0:
-                    #     self.player.image = pygame.transform.scale(
-                    #         pygame.image.load(Game_Path.player_die_path),
-                    #         (self.player.width, self.player.height),
-                    #     )
-                    #     self.post(Event(Event_Code.DIE))
-                    #     self.post(Event(Event_Code.DRAW))
+        for bullet in self.boss.boss_bullets1:
+            if bullet.rect.colliderect(self.player.rect):
+                if self.player.hp > 0:
+                    self.player.hp -= 2
+                    self.post(Event(Event_Code.HURT))
+                    bullet.kill()
+                # if self.player.hp <= 0:
+                #     self.player.image = pygame.transform.scale(
+                #         pygame.image.load(Game_Path.player_die_path),
+                #         (self.player.width, self.player.height),
+                #     )
+                #     self.post(Event(Event_Code.DIE))
+                #     self.post(Event(Event_Code.DRAW))
 
             """
             >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
             """
-            if self.boss.hp > 0:
-                for bullet in self.player.player_bullets:
-                    if not self.player.through:
-                        for wall in self.walls_collision:
-                            if bullet.rect.colliderect(wall.rect):
-                                bullet.kill()
-
-                    for fellow in self.boss.fellow1s:
-                        if bullet.rect.colliderect(fellow.rect):
-                            fellow.hp -= self.player.attack
+        if self.boss.hp > 0:
+            for bullet in self.player.player_bullets:
+                if not self.player.through:
+                    for wall in self.walls_collision:
+                        if bullet.rect.colliderect(wall.rect):
                             bullet.kill()
-
-                    for fellow in self.boss.fellow2s:
-                        if bullet.rect.colliderect(fellow.rect):
-                            fellow.hp -= self.player.attack
-                            bullet.kill()
-
-                    if bullet.rect.colliderect(self.boss.rect):
-                        self.boss.hp -= self.player.attack
-                        bullet.kill()
-                        if self.player.blood_eat:
-                            a = random.randint(0, 8)
-                            if a == 1 and self.player.hp < 20:
-                                self.player.hp += 1
 
                 for fellow in self.boss.fellow1s:
-                    for bullet in fellow.fellow_bullets:
-                        if bullet.rect.colliderect(self.player.rect):
-                            if self.player.hp > 0:
-                                self.player.hp -= 1
-                                self.post(Event(Event_Code.HURT))
-                                bullet.kill()
+                    if bullet.rect.colliderect(fellow.rect):
+                        fellow.hp -= self.player.attack
+                        fellow.image = fellow_change_color(
+                            fellow.image,
+                            5 * self.player.attack,
+                            5 * self.player.attack,
+                            5 * self.player.attack,
+                        )
+                        bullet.kill()
 
                 for fellow in self.boss.fellow2s:
-                    for bullet in fellow.fellow_bullets:
-                        if bullet.rect.colliderect(self.player.rect):
-                            if self.player.hp > 0:
-                                self.player.hp -= 1
-                                self.post(Event(Event_Code.HURT))
-                                bullet.kill()
+                    if bullet.rect.colliderect(fellow.rect):
+                        fellow.hp -= self.player.attack
+                        fellow.image = fellow_change_color(
+                            fellow.image,
+                            5 * self.player.attack,
+                            5 * self.player.attack,
+                            5 * self.player.attack,
+                        )
+                        bullet.kill()
+
+                if bullet.rect.colliderect(self.boss.rect):
+                    self.boss.hp -= self.player.attack
+                    bullet.kill()
+                    if self.player.blood_eat:
+                        a = random.randint(0, 8)
+                        if a == 1 and self.player.hp < 20:
+                            self.player.hp += 1
+
+            for fellow in self.boss.fellow1s:
+                for bullet in fellow.fellow_bullets:
+                    if bullet.rect.colliderect(self.player.rect):
+                        if self.player.hp > 0:
+                            self.player.hp -= 1
+                            self.post(Event(Event_Code.HURT))
+                            bullet.kill()
+
+            for fellow in self.boss.fellow2s:
+                for bullet in fellow.fellow_bullets:
+                    if bullet.rect.colliderect(self.player.rect):
+                        if self.player.hp > 0:
+                            self.player.hp -= 1
+                            self.post(Event(Event_Code.HURT))
+                            bullet.kill()
 
             # 被黑洞吸入
 
@@ -215,13 +259,14 @@ class Boss_Scene1(Listener):
             for tile in self.tiles:  # 遍历所有地图背景图块并描绘
                 tile.draw()
 
-            window.blit(self.player.image, self.player.rect)
-
             for wall in self.walls:  # 遍历所有墙并描绘
                 wall.draw()
 
             for wall in self.walls_collision:  # 遍历所有墙并描绘
                 wall.draw()
+
+            self.portal_show()
+            window.blit(self.player.image, self.player.rect)
 
             window.blit(self.attack_showing.image, self.attack_showing.rect)
             attack_num = font1.render(str(self.player.attack), True, (255, 255, 255))
@@ -254,7 +299,6 @@ class Boss_Scene1(Listener):
                     ),
                 )
 
-            self.portal_show()
             self.boss.draw()
 
             for bullet in self.player.player_bullets:  # 遍历所有玩家子弹并描绘

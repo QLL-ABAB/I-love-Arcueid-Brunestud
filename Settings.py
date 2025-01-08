@@ -157,7 +157,7 @@ class Game_Path:
         r".\assets\tiles\4.png",
         r".\assets\tiles\5.png",
         r".\assets\tiles\6.png",
-        r".\assets\tiles\ice_floor.png",
+        r".\assets\tiles\water.png",
     ]
 
     city_tiles_path = [

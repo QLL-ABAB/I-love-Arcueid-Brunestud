@@ -78,6 +78,24 @@ def change_color(image, R, G, B):
     return image
 
 
+def fellow_change_color(image, R, G, B):
+
+    for x in range(image.get_width()):
+        for y in range(image.get_height()):
+            r0, g0, b0, a0 = image.get_at((x, y))
+            if r0 != 0 and g0 != 0 and b0 != 0:
+                r1 = min(r0 + R, 255)
+                g1 = min(g0 + G, 255)
+                b1 = min(b0 + B, 255)
+            else:
+                r1 = 0
+                g1 = 0
+                b1 = 0
+            image.set_at(((x, y)), (r1, g1, b1, 255))
+
+    return image
+
+
 class Fixed_object(Listener):
     def __init__(self, image: pygame.Surface, rect: pygame.Rect):
         # 两个属性代表显示的图片路径、显示的矩形的位置和大小
