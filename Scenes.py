@@ -70,6 +70,8 @@ class Scene_Forest(Listener):  # 场景类
             17, pygame.Rect(5, 180, self.attribute_size * 2, self.attribute_size * 2)
         )
 
+        self.portal_num = 0
+
         """
         >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         """  # 看这里 （定义的水瓶有关的变量） （可以自己加更多的变量）
@@ -515,10 +517,22 @@ class Scene_Forest(Listener):  # 场景类
         >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         """
         if event.code == Event_Code.CHECK_PORTAL1:
-            if self.portal1.rect.colliderect(self.player.rect) and keys[pygame.K_e]:
+            if self.portal_num <= 20:
+                self.portal_num += 1
+            if (
+                self.portal1.rect.colliderect(self.player.rect)
+                and keys[pygame.K_e]
+                and self.portal_num >= 20
+            ):
+                self.portal_num = 0
                 self.post(Event(Scene_Code.CITY))
 
-            if self.portal3.rect.colliderect(self.player.rect) and keys[pygame.K_e]:
+            if (
+                self.portal3.rect.colliderect(self.player.rect)
+                and keys[pygame.K_e]
+                and self.portal_num >= 20
+            ):
+                self.portal_num = 0
                 self.post(Event(Scene_Code.BOSS))
 
         """
@@ -876,6 +890,7 @@ class Scene_City(Listener):  # 场景类
         self.attribute_size = SceneSettings.attribute_size  # 属性显示的大小
 
         self.portal2 = Portals(SceneSettings.portal_speed, 0)
+        self.portal_num = 0
 
         # 根据地图的尺寸每行每列逐个生成地图方块
         for i in range(self.map_range[0] // 40 + 1):
@@ -1050,8 +1065,14 @@ class Scene_City(Listener):  # 场景类
                 self.post(Event(Event_Code.CAN_MOVE, event.body))
 
         if event.code == Event_Code.CHECK_PORTAL2:
-
-            if self.portal2.rect.colliderect(self.player.rect) and keys[pygame.K_e]:
+            if self.portal_num <= 20:
+                self.portal_num += 1
+            if (
+                self.portal2.rect.colliderect(self.player.rect)
+                and keys[pygame.K_e]
+                and self.portal_num >= 20
+            ):
+                self.portal_num = 0
                 self.post(Event(Scene_Code.FOREST))
                 # print("go to forest")
 
