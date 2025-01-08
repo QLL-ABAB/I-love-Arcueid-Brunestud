@@ -31,6 +31,7 @@ class Player1(EntityLike):  # 玩家类
         self.through = False
         self.add_bullet_speed = False
         self.skill = False
+        self.bottle = False
 
         self.player_bullets = pygame.sprite.Group()
         self.add_bullet_num = 0

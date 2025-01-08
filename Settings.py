@@ -219,6 +219,9 @@ class Game_Path:
         r".\assets\player\add_bullet_speed.png",  # 13
         r".\assets\player\skill.png",  # 14
         r".\assets\player\attack_harder.png",  # 15
+        r".\assets\player\bottle.png",  # 16
+        r".\assets\player\water_bottle.png",  # 17
+        r".\assets\player\get_water.png",  # 18
     ]
 
     game_machine_path = r".\assets\tiles\game_machine.jpg"

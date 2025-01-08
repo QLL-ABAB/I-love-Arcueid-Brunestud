@@ -29,6 +29,7 @@ class Scene_Shop(Listener):
         self.not_buy_through = True
         self.not_buy_add_bullet_speed = True
         self.not_buy_skill = True
+        self.not_buy_bottle = True
 
         self.add_hp = Attribute_showing(3, pygame.Rect(500, 150, 100, 100))
         self.add_hp_original_image = copy.copy(self.add_hp.image)
@@ -63,6 +64,10 @@ class Scene_Shop(Listener):
         self.skill = Attribute_showing(14, pygame.Rect(1100, 280, 100, 100))
         self.skill_original_image = copy.copy(self.skill.image)
         self.skill_changed_image = change_color(self.skill.image, 1.5, 1.5, 1.5)
+
+        self.bottle = Attribute_showing(16, pygame.Rect(500, 430, 100, 100))
+        self.bottle_original_image = copy.copy(self.bottle.image)
+        self.bottle_changed_image = change_color(self.bottle.image, 1.5, 1.5, 1.5)
 
         self.num1 = 20
 
@@ -212,6 +217,23 @@ class Scene_Shop(Listener):
         else:
             self.skill.image = self.skill_original_image
 
+        if self.bottle.rect.collidepoint(mouse_pos):
+            self.bottle.image = self.bottle_changed_image
+
+            if (
+                self.player.coin >= 1
+                and self.not_buy_bottle == True
+                and mouse_get_pressed[0]
+                and self.num1 >= 20
+            ):
+                self.num1 = 0
+                self.player.coin -= 1
+                self.not_buy_bottle = False
+                self.player.bottle = True
+
+        else:
+            self.bottle.image = self.bottle_original_image
+
         if self.exit.rect.collidepoint(mouse_pos):
             self.exit.image = self.exit_changed_image
             if mouse_get_pressed[0]:
@@ -340,6 +362,7 @@ class Scene_Shop(Listener):
             window.blit(self.through.image, self.through.rect)
             window.blit(self.add_bullet_speed.image, self.add_bullet_speed.rect)
             window.blit(self.skill.image, self.skill.rect)
+            window.blit(self.bottle.image, self.bottle.rect)
 
             for i in range(self.player.hp):
                 hp1 = Attribute_showing(

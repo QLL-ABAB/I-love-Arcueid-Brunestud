@@ -61,6 +61,14 @@ class Scene_Forest(Listener):  # 场景类
         self.add_bullet_speed = Attribute_showing(
             13, pygame.Rect(10, 140, self.attribute_size * 2, self.attribute_size * 2)
         )
+
+        self.bottle = Attribute_showing(
+            16, pygame.Rect(5, 180, self.attribute_size, self.attribute_size)
+        )
+
+        self.get_water = Attribute_showing(18, pygame.Rect(1150, 710, 150, 150))
+        self.can_get_water = False
+
         self.skills = []
         self.first_add1 = True
         self.first_add2 = True
@@ -579,6 +587,30 @@ class Scene_Forest(Listener):  # 场景类
                     ),
                 )
 
+            """
+            >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>  
+            """  # 水瓶
+
+            if self.player.bottle:
+                window.blit(
+                    pygame.transform.scale(
+                        self.bottle.image,
+                        (self.attribute_size * 2, self.attribute_size * 2),
+                    ),
+                    self.bottle.rect,
+                )
+
+            for water in self.water_tiles:
+                if self.player.rect.colliderect(water.rect):
+                    self.can_get_water = True
+
+            if self.can_get_water:
+                window.blit(self.get_water.image, self.get_water.rect)
+
+            """
+            >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+            """
+
             for enemy2 in self.enemy2s:
                 if self.player.rect.colliderect(enemy2.rect):
                     self.judege_window = True
@@ -750,6 +782,9 @@ class Scene_City(Listener):  # 场景类
                 SceneSettings.tile_size * 4,
             )
         )
+        """
+        >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        """  # 属性图标
 
         self.coin_image = pygame.transform.scale(
             pygame.image.load(Game_Path.coin_path),
@@ -772,6 +807,9 @@ class Scene_City(Listener):  # 场景类
         self.add_bullet_speed = Attribute_showing(
             13, pygame.Rect(10, 140, self.attribute_size * 2, self.attribute_size * 2)
         )
+        self.bottle = Attribute_showing(
+            16, pygame.Rect(5, 180, self.attribute_size, self.attribute_size)
+        )
         self.skills = []
         self.first_add1 = True
         self.first_add2 = True
@@ -786,7 +824,8 @@ class Scene_City(Listener):  # 场景类
             self.hp_showings.append(hp)
         """
         >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-        """
+        """  # 酒店界面
+
         self.whether_hotel = False
 
         self.whether_sleep = False
@@ -908,11 +947,6 @@ class Scene_City(Listener):  # 场景类
         》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》
         """
 
-        # if event.code == Event_Code.CHECK_FIRE:
-        #     for fire in self.fires:
-        #         if fire.rect.colliderect(self.player.rect):
-        #             self.post(Event(Event_Code.BURN))
-
         if event.code == Event_Code.STEP:  # STEP是每次游戏周期刷新时会被触发的事件
             self.update_camera()  # 更新镜头的位置
 
@@ -965,6 +999,19 @@ class Scene_City(Listener):  # 场景类
                         self.attribute_size * 2,
                         self.attribute_size * 2,
                     ),
+                )
+
+            """
+            >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+            """  # 水瓶
+
+            if self.player.bottle:
+                window.blit(
+                    pygame.transform.scale(
+                        self.bottle.image,
+                        (self.attribute_size * 2, self.attribute_size * 2),
+                    ),
+                    self.bottle.rect,
                 )
 
             self.portal2.update()
