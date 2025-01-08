@@ -126,7 +126,7 @@ class Scene_Shop(Listener):
 
             if (
                 self.player.coin >= 1
-                and self.player.hp < 21
+                and self.player.hp < 20
                 and mouse_get_pressed[0]
                 and self.num1 >= 20
             ):
