@@ -134,6 +134,8 @@ class Event_Code(Enum):
 
     HURT = 23
 
+    SHOOT_WATER = 24
+
     # WHETHER_TO_FIGHT_FALSE = 23
 
 
@@ -149,6 +151,7 @@ class Game_Path:
         r".\assets\boss_room\boss_fellows\1.png",
         r".\assets\boss_room\boss_fellows\2.png",
     ]
+    water_hole_path = r".\assets\tiles\water_hole.png"
 
     forest_tiles_path = [
         r".\assets\tiles\1.png",
@@ -198,8 +201,6 @@ class Game_Path:
     fire_path = [
         r".\assets\tiles\fire1.png",
         r".\assets\tiles\fire2.png",
-        r".\assets\tiles\fire3.png",
-        r".\assets\tiles\fire4.png",
     ]
 
     attribute_path = [

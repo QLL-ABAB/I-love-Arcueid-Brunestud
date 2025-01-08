@@ -65,3 +65,23 @@ class Water(EntityLike):
             ),
             rect=rect,
         )
+
+
+class Water_hole(EntityLike):  # 障碍物的类
+    def __init__(self, tuple_pos: tuple[int, int]):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.transform.scale(
+            pygame.image.load(Game_Path.water_hole_path),
+            (80, 80),
+        )
+        self.image.set_alpha(150)
+
+        self.rect = self.image.get_rect(center=tuple_pos)
+
+        self.staying_time = 0
+
+    def update(self):
+        self.staying_time += 1
+        self.image.set_alpha(150 - self.staying_time)
+        if self.staying_time > 160:
+            self.kill()
