@@ -24,7 +24,7 @@ class Player1(EntityLike):  # 玩家类
         self.swift = PlayerSettings.player_animation_speed  # 玩家动画效果
         self.right = True  # 玩家是否向右移动
         self.burn = 0  # 燃烧爆条效果
-        self.attack = PlayerSettings.player_attack  # 玩家的攻击力
+        self.attack = 999  # PlayerSettings.player_attack  # 玩家的攻击力
         self.coin = 5  # 玩家的金币数量
 
         self.blood_eat = False
@@ -107,9 +107,6 @@ class Player1(EntityLike):  # 玩家类
         nx = self.rect.x
         ny = self.rect.y
 
-        if self.add_bullet_num < 20:
-            self.add_bullet_num += 1
-
         if keys[pygame.K_w] and self.rect.y > 0 and self.hp > 0:  # W键被按下
             ny -= self.speed
             self.post(Event(Event_Code.MOVE_ANIMATIOM))
@@ -152,12 +149,7 @@ class Player1(EntityLike):  # 玩家类
 
         self.post(Event(Event_Code.REQUEST_MOVE, {"POS": (nx, ny)}))  # 发出请求移动事件
 
-        if (
-            keys[pygame.K_SPACE] and self.hp > 0 and self.add_bullet_num >= 20
-        ):  # 空格键被按下
-            bullet = Player_bullet(self.rect)
-            self.player_bullets.add(bullet)
-            self.add_bullet_num = 0
+        ############
 
     def animation(self):
         self.picture_num += self.swift  # 图片切换速度

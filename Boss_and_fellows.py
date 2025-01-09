@@ -51,7 +51,7 @@ class Boss1(Fixed_object):
         self.boss_bullets1 = pygame.sprite.Group()
 
         self.boss_die_num = 0
-        self.num = 0
+        self.die_real_num = 0
         self.boss_animaton = True
         self.move_x = 0
         self.move_y = 0
@@ -109,17 +109,17 @@ class Boss1(Fixed_object):
 
         elif event.code == Event_Code.BOSS_DIE and self.boss_animaton:
             self.boss_die_num += 1
-            if self.boss_die_num >= 100:
+            if self.boss_die_num >= 4:
                 self.boss_die_num = 0
-                self.num += 1
+                self.die_real_num += 1
 
             self.image = pygame.transform.scale(
-                pygame.image.load(Game_Path.baozha_path[self.num]),
+                pygame.image.load(Game_Path.baozha_path[self.die_real_num]),
                 (self.width, self.height),
             )  # boss死亡动画效果
 
             self.speed = 0
-            if self.num >= 8:
+            if self.die_real_num >= 8:
                 self.post(Event(Scene_Code.WIN))
                 self.boss_animaton = False
 
@@ -270,6 +270,8 @@ class Fellows(Fixed_object):
     def update(self):
         if self.rect.left <= 10:
             self.kill()
+        if self.hp <= 0:
+            self.kill()
 
 
 class Fellow_attack(Fixed_object):
@@ -286,3 +288,6 @@ class Fellow_attack(Fixed_object):
         self.rect.left -= self.bullet_speed
         if self.rect.left <= -8:
             self.kill()
+
+
+# class Collapse():

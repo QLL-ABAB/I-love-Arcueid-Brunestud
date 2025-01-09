@@ -28,6 +28,9 @@ class Boss_Scene1(Listener):
             WindowSettings.width,
             WindowSettings.height,
         )
+
+        self.add_player_bullet_num = 0
+
         self.attribute_size = SceneSettings.attribute_size  # 属性显示的大小
         self.blood_showings = []
         self.skills = []
@@ -44,6 +47,22 @@ class Boss_Scene1(Listener):
             6, pygame.Rect(10, 100, self.attribute_size * 2, self.attribute_size * 2)
         )
 
+        self.through = Attribute_showing(
+            12, pygame.Rect(10, 100, self.attribute_size * 2, self.attribute_size * 2)
+        )
+
+        self.add_bullet_speed = Attribute_showing(
+            13, pygame.Rect(10, 100, self.attribute_size * 2, self.attribute_size * 2)
+        )
+
+        if self.player.add_bullet_speed == True:
+            self.player_shoot_limit = 60
+        else:
+            self.player_shoot_limit = 90
+
+        """
+        >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        """  #  我的圣剑
         self.skill = Attribute_showing(
             14, pygame.Rect(10, 100, self.attribute_size * 2, self.attribute_size * 2)
         )
@@ -52,13 +71,7 @@ class Boss_Scene1(Listener):
         self.energy_num = 0
         self.hold_time = 0
         self.sword_light = Sword_light(pygame.Rect(100, 100, 10, 30), 0)  # 光剑
-
-        self.through = Attribute_showing(
-            12, pygame.Rect(10, 100, self.attribute_size * 2, self.attribute_size * 2)
-        )
-        self.add_bullet_speed = Attribute_showing(
-            13, pygame.Rect(10, 100, self.attribute_size * 2, self.attribute_size * 2)
-        )
+        self.sword_lights = []
 
         """
         >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -112,14 +125,34 @@ class Boss_Scene1(Listener):
         self.portal3 = Fixed_portals(2)
         self.grab_num = 0
 
-    def listen(self, event: Event):  # 场景所监听的事件
+        """
+        >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        """
+
+    def listen(self, event: Event):
         super().listen(event)
-
+        mouse_pos = pygame.mouse.get_pos()
+        mouse_get_pressed = pygame.mouse.get_pressed()
         keys = pygame.key.get_pressed()
-
+        """
+        >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        """  # 玩家的子弹发射
+        if self.add_player_bullet_num <= self.player_shoot_limit:
+            self.add_player_bullet_num += 1
         if (
-            event.code == Event_Code.REQUEST_MOVE and self.player.rect.center[0] <= 1200
-        ):  # 监听玩家的移动请求事件
+            keys[pygame.K_SPACE]
+            and self.player.hp > 0
+            and self.add_player_bullet_num >= self.player_shoot_limit
+        ):
+            bullet = Player_bullet(self.player.rect)
+            self.player.player_bullets.add(bullet)
+            self.add_player_bullet_num = 0
+
+        """
+        >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        """  # 玩家的移动请求事件
+
+        if event.code == Event_Code.REQUEST_MOVE and self.player.rect.center[0] <= 1200:
             can_move = 1
             target_rect = pygame.Rect(
                 event.body["POS"][0],
@@ -249,10 +282,11 @@ class Boss_Scene1(Listener):
             >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
             """  # 光剑制作
             if self.player.skill == True:
-                if keys[pygame.K_SPACE] and self.energy_enough:
+                if mouse_get_pressed[0] and self.energy_enough:
                     self.hold_time += 1
                     pass
-                elif self.hold_time != 0:
+
+                elif mouse_get_pressed[1]:
                     self.shoot_sword = True
 
             if self.shoot_sword:
@@ -282,7 +316,7 @@ class Boss_Scene1(Listener):
             """
             >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
             """
-        if event.code == Event_Code.DRAW:  # DRAW事件，用于描绘场景中的实体
+        if event.code == Event_Code.DRAW:
 
             for tile in self.tiles:  # 遍历所有地图背景图块并描绘
                 tile.draw()
@@ -295,6 +329,10 @@ class Boss_Scene1(Listener):
 
             self.portal_show()
             window.blit(self.player.image, self.player.rect)
+
+            """
+            >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+            """  #   技能栏
 
             window.blit(self.attack_showing.image, self.attack_showing.rect)
             attack_num = font1.render(str(self.player.attack), True, (255, 255, 255))
@@ -327,6 +365,9 @@ class Boss_Scene1(Listener):
                     ),
                 )
 
+            """
+            >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+            """
             self.boss.draw()
 
             for bullet in self.player.player_bullets:  # 遍历所有玩家子弹并描绘

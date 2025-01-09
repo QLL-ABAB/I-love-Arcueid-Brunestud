@@ -92,6 +92,14 @@ if __name__ == "__main__":
                     elif event.key == pygame.K_ESCAPE:
                         game_manager.scene_greedy_snake.game_close = True
 
+        if game_manager.scene == game_manager.scene_game1_over:
+            for event in event_get:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_o:
+                        add_event(Event(Scene_Code.CITY))
+                    if event.key == pygame.K_SPACE:
+                        add_event(Event(Scene_Code.GAME_GREEDY_SNAKE))
+
         """
         >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         """
@@ -114,11 +122,6 @@ if __name__ == "__main__":
             and game_manager.scene == game_manager.scene_boss
         ):
             add_event(Event(Event_Code.BOSS_DIE))
-
-        # if running == False:
-        #     pygame.quit()
-        #     sys.exit()
-        #     exit()
 
         """
         >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
