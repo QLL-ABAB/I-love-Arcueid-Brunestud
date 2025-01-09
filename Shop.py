@@ -1,5 +1,7 @@
 import pygame
 import copy
+import textwrap
+
 
 from Collections import *
 from Settings import *
@@ -98,18 +100,33 @@ class Scene_Shop(Listener):
         self.exit_dialog_changed_image = change_color(
             self.exit_dialog.image, 1.5, 1.5, 1.5
         )
-
-        self.word_print1 = []
         self.word_return = ""
-        self.word_print2 = []
-        self.word_print3 = []
-        self.word_print4 = []
-        self.word_print5 = []
-        self.word_print6 = []
-        self.word_print7 = []
-        self.word_print8 = []
-        self.word_print9 = []
-        self.row_num = 1
+        self.word_print1 = ""
+        self.word_print1_before = []
+        self.word_print2 = ""
+        self.word_print3 = ""
+        self.word_print4 = ""
+        self.word_print5 = ""
+        self.word_print6 = ""
+        self.word_print7 = ""
+        self.word_print8 = ""
+        self.word_print9 = ""
+        self.rows_num_choice = 0
+        self.rows_num = 0
+        self.rows_left = 0
+        self.row = [
+            self.word_print1,
+            self.word_print2,
+            self.word_print3,
+            self.word_print4,
+            self.word_print5,
+            self.word_print6,
+            self.word_print7,
+            self.word_print8,
+            self.word_print9,
+        ]
+        self.max_width = 80
+        self.wrapped_lines = []
         """
         >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         """
@@ -126,7 +143,7 @@ class Scene_Shop(Listener):
 
             if (
                 self.player.coin >= 1
-                and self.player.hp < 20
+                and self.player.hp < 21
                 and mouse_get_pressed[0]
                 and self.num1 >= 20
             ):
@@ -217,23 +234,6 @@ class Scene_Shop(Listener):
         else:
             self.skill.image = self.skill_original_image
 
-        if self.bottle.rect.collidepoint(mouse_pos):
-            self.bottle.image = self.bottle_changed_image
-
-            if (
-                self.player.coin >= 1
-                and self.not_buy_bottle == True
-                and mouse_get_pressed[0]
-                and self.num1 >= 20
-            ):
-                self.num1 = 0
-                self.player.coin -= 1
-                self.not_buy_bottle = False
-                self.player.bottle = True
-
-        else:
-            self.bottle.image = self.bottle_original_image
-
         if self.exit.rect.collidepoint(mouse_pos):
             self.exit.image = self.exit_changed_image
             if mouse_get_pressed[0]:
@@ -268,80 +268,90 @@ class Scene_Shop(Listener):
 
             for event in event_get:
                 if event.type == pygame.KEYDOWN:
+
                     if event.key == pygame.K_BACKSPACE:
-                        if self.word_print1:
-                            self.word_print1.pop()
+                        if self.word_print1_before:
+                            self.word_print1_before.pop()
+                            self.row[0] = "".join(self.word_print1_before)
+
                     elif event.key == pygame.K_KP_ENTER or event.key == pygame.K_RETURN:
-                        self.row_num = 1
-                        self.word_input = "".join(self.word_print1)
-                        self.word_print1 = []
-                        self.word_return, row_num = AI_talk(self.word_input)
-                        self.word_print = list(self.word_return)
-                        self.row = [
-                            self.word_print1,
-                            self.word_print2,
-                            self.word_print3,
-                            self.word_print4,
-                            self.word_print5,
-                            self.word_print6,
-                            self.word_print7,
-                            self.word_print8,
-                        ]
-
-                        for i in range(len(self.word_print)):
-                            self.row[self.row_num - 1].append(self.word_print[i])
-
-                            if (
-                                (self.word_print[i] == ",")
-                                or (self.word_print[i] == ".")
-                                or (self.word_print[i] == "!")
-                                or (self.word_print[i] == "?")
-                                or (self.word_print[i] == "\n")
-                                or (self.word_print[i] == ":")
-                            ):
-                                self.row_num += 1
+                        self.word_input = self.row[0]
+                        self.word_print1_before = []
+                        self.row[0] = ""
+                        self.word_return = AI_talk(self.word_input)
+                        self.wrapped_lines = textwrap.wrap(
+                            self.word_return, width=self.max_width
+                        )
+                        self.rows_num = len(self.wrapped_lines) // 8
+                        self.rows_left = len(self.wrapped_lines) % 8
 
                     elif event.key == pygame.K_TAB:
-                        self.row_num = 1
-                        self.word_print1 = []
-                        self.word_print2 = []
-                        self.word_print3 = []
-                        self.word_print4 = []
-                        self.word_print5 = []
+                        self.wrapped_lines = []
+                        self.word_print1_before = []
+                        self.row[0] = ""
+                        self.row[1] = ""
+                        self.row[2] = ""
+                        self.row[3] = ""
+                        self.row[4] = ""
+                        self.row[5] = ""
+                        self.row[6] = ""
+                        self.row[7] = ""
+
+                    elif event.key == pygame.K_UP:
+                        if self.rows_num_choice > 0:
+                            self.rows_num_choice -= 1
+
+                    elif event.key == pygame.K_DOWN:
+                        if self.rows_num_choice < self.rows_num:
+                            self.rows_num_choice += 1
 
                     else:
-                        self.word_print1.append(event.unicode)
+                        self.word_print1_before.append(event.unicode)
+                        self.row[0] = "".join(self.word_print1_before)
+
+            if self.rows_num_choice < self.rows_num:
+                for j in range(8):
+                    self.row[j] = self.wrapped_lines[self.rows_num_choice * 8 + j]
+
+                    # print(self.row[j])
+
+            elif self.rows_num_choice == self.rows_num:
+
+                for j in range(len(self.wrapped_lines) % 8 - 1):
+                    self.row[j] = self.wrapped_lines[self.rows_num_choice * 8 + j]
+
+                    # print(self.row[j])
 
             window.blit(
-                font1.render(str("".join(self.word_print1)), True, (255, 255, 255)),
+                font1.render(self.row[0], True, (255, 255, 255)),
                 (10, 560),
             )
             window.blit(
-                font1.render(str("".join(self.word_print2)), True, (255, 255, 255)),
+                font1.render(self.row[1], True, (255, 255, 255)),
                 (10, 600),
             )
             window.blit(
-                font1.render("".join(self.word_print3), True, (255, 255, 255)),
+                font1.render(self.row[2], True, (255, 255, 255)),
                 (10, 640),
             )
             window.blit(
-                font1.render("".join(self.word_print4), True, (255, 255, 255)),
+                font1.render(self.row[3], True, (255, 255, 255)),
                 (10, 680),
             )
             window.blit(
-                font1.render("".join(self.word_print5), True, (255, 255, 255)),
+                font1.render(self.row[4], True, (255, 255, 255)),
                 (10, 720),
             )
             window.blit(
-                font1.render("".join(self.word_print6), True, (255, 255, 255)),
+                font1.render(self.row[5], True, (255, 255, 255)),
                 (10, 760),
             )
             window.blit(
-                font1.render("".join(self.word_print7), True, (255, 255, 255)),
+                font1.render(self.row[6], True, (255, 255, 255)),
                 (10, 800),
             )
             window.blit(
-                font1.render("".join(self.word_print8), True, (255, 255, 255)),
+                font1.render(self.row[7], True, (255, 255, 255)),
                 (10, 840),
             )
 
@@ -362,7 +372,6 @@ class Scene_Shop(Listener):
             window.blit(self.through.image, self.through.rect)
             window.blit(self.add_bullet_speed.image, self.add_bullet_speed.rect)
             window.blit(self.skill.image, self.skill.rect)
-            window.blit(self.bottle.image, self.bottle.rect)
 
             for i in range(self.player.hp):
                 hp1 = Attribute_showing(

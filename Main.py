@@ -143,10 +143,10 @@ if __name__ == "__main__":
             if game_manager.scene == game_manager.scene_boss:
                 game_manager.scene.boss.listen(event)
 
-            if game_manager.scene == game_manager.scene_shop:
-                game_manager.scene_shop.word_window(
-                    game_manager.scene_shop.word_window_judge, event_get
-                )
+        if game_manager.scene == game_manager.scene_shop:
+            game_manager.scene_shop.word_window(
+                game_manager.scene_shop.word_window_judge, event_get
+            )
 
         pygame.display.flip()  # 缓冲绘制到屏幕上
 

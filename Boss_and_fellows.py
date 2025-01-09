@@ -58,6 +58,7 @@ class Boss1(Fixed_object):
 
         self.fellow1s = pygame.sprite.Group()
         self.fellow2s = pygame.sprite.Group()
+        self.fellow3s = pygame.sprite.Group()
 
     def call_the_fellows(self):
         if self.hp > 0:
@@ -66,6 +67,8 @@ class Boss1(Fixed_object):
                 self.fellow1s.add(Fellows(0))
             if random_num == 4 and len(self.fellow2s) <= 6:
                 self.fellow2s.add(Fellows(1))
+            if random_num == 6 and len(self.fellow3s) <= 6:
+                self.fellow3s.add(Fellows(2))
 
     def listen(self, event: Event):
 
@@ -80,6 +83,8 @@ class Boss1(Fixed_object):
                 for fellow in self.fellow1s:
                     fellow.change_speed()
                 for fellow in self.fellow2s:
+                    fellow.change_speed()
+                for fellow in self.fellow3s:
                     fellow.change_speed()
 
             if self.hp > 0:
@@ -161,7 +166,6 @@ class Boss1(Fixed_object):
                 fellow.auto_move()
                 fellow.auto_fire()
                 window.blit(fellow.image, fellow.rect)
-            fellow.update()
             fellow.draw()
 
         for fellow in self.fellow2s:
@@ -170,7 +174,14 @@ class Boss1(Fixed_object):
                 fellow.auto_move()
                 fellow.auto_fire()
                 window.blit(fellow.image, fellow.rect)
-            fellow.update()
+            fellow.draw()
+
+        for fellow in self.fellow3s:
+            if fellow.hp > 0:
+
+                fellow.auto_move()
+                fellow.auto_fire()
+                window.blit(fellow.image, fellow.rect)
             fellow.draw()
 
 
@@ -241,7 +252,7 @@ class Fellows(Fixed_object):
         if self.rect.left >= 650:
             if (self.rect.center[1] + self.speed_y * 5) >= 60 and (
                 self.rect.center[1] + self.speed_y * 5
-            ) <= 880:
+            ) <= 860:
                 self.rect.top += self.speed_y * 5
 
         if self.rect.left < 650 and self.rect.left > 520:

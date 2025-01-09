@@ -55,15 +55,13 @@ class Boss_Scene1(Listener):
             13, pygame.Rect(10, 100, self.attribute_size * 2, self.attribute_size * 2)
         )
 
-        if self.player.add_bullet_speed == True:
-            self.player_shoot_limit = 60
-        else:
-            self.player_shoot_limit = 90
+        self.player_shoot_limit = 90
 
         self.explosion = pygame.sprite.Group()
         """
         >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         """  #  我的圣剑
+
         self.skill = Attribute_showing(
             14, pygame.Rect(10, 100, self.attribute_size * 2, self.attribute_size * 2)
         )
@@ -80,6 +78,7 @@ class Boss_Scene1(Listener):
         self.hold_time_showings = []
 
         self.boss_be_attacked_num = 5
+        self.add_energy = 1
 
         for i in range(30):
             energy = Attribute_showing(
@@ -151,15 +150,52 @@ class Boss_Scene1(Listener):
         self.portal3 = Fixed_portals(2)
         self.grab_num = 0
 
-        """
-        >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-        """
+    """
+    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    """  # 函数群
+
+    # 自爆飞机
+    def fellow_explode(self, fellows):
+        for fellow in fellows:
+            if fellow.rect.left <= 450:
+                if fellow.rect.left > self.player.rect.left:
+                    fellow.rect.centerx -= (
+                        compute_th(fellow.rect.center, self.player.rect.center)[0]
+                        * fellow.speed
+                    )
+                    fellow.rect.centery -= (
+                        compute_th(fellow.rect.center, self.player.rect.center)[1]
+                        * fellow.speed
+                    )
+            if fellow.rect.colliderect(self.player.rect):
+                self.player.hp -= 2
+                self.post(Event(Event_Code.HURT))
+                self.explosion.add(Fellow_explosion(fellow.rect.center))
+                fellow.kill()
+
+    def fellow_touch_wall(self, fellows):
+        for fellow in fellows:
+            if fellow.rect.left <= 35:
+                self.explosion.add(Fellow_explosion(fellow.rect.center))
+                fellow.kill()
+
+    """
+    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    """
 
     def listen(self, event: Event):
         super().listen(event)
         mouse_pos = pygame.mouse.get_pos()
         mouse_get_pressed = pygame.mouse.get_pressed()
         keys = pygame.key.get_pressed()
+
+        """
+        >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        """  # 加速
+        if self.player.add_bullet_speed == True:
+            self.add_energy = 2
+        if self.player.add_bullet_speed == True:
+            self.player_shoot_limit = 60
         """
         >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         """  # 玩家的子弹发射
@@ -300,6 +336,19 @@ class Boss_Scene1(Listener):
                             self.explosion.add(Fellow_explosion(fellow.rect.center))
                         bullet.kill()
 
+                for fellow in self.boss.fellow3s:
+                    if bullet.rect.colliderect(fellow.rect) and fellow.hp > 0:
+                        fellow.hp -= self.player.attack
+                        fellow.image = fellow_change_color(
+                            fellow.image,
+                            5 * self.player.attack,
+                            5 * self.player.attack,
+                            5 * self.player.attack,
+                        )
+                        if fellow.hp <= 0:
+                            self.explosion.add(Fellow_explosion(fellow.rect.center))
+                        bullet.kill()
+
                 if bullet.rect.colliderect(self.boss.rect):
                     self.boss.hp -= self.player.attack
                     bullet.kill()
@@ -314,7 +363,7 @@ class Boss_Scene1(Listener):
 
             if self.player.skill == True:
                 if self.energy_num <= 50:
-                    self.energy_num += 1
+                    self.energy_num += self.add_energy
                 if self.energy_num == 50 and self.energy_block < 30:
                     self.energy_block += 1
                     self.energy_num = 0
@@ -364,6 +413,14 @@ class Boss_Scene1(Listener):
                         self.explosion.add(Fellow_explosion(fellow.rect.center))
                         fellow.kill()
 
+                for fellow in self.boss.fellow3s:
+                    for bullet in fellow.fellow_bullets:
+                        if sword_light.rect.colliderect(bullet.rect):
+                            bullet.kill()
+                    if sword_light.rect.colliderect(fellow.rect):
+                        self.explosion.add(Fellow_explosion(fellow.rect.center))
+                        fellow.kill()
+
                 for bullet in self.boss.boss_bullets:
                     if sword_light.rect.colliderect(bullet.rect):
                         bullet.kill()
@@ -394,6 +451,14 @@ class Boss_Scene1(Listener):
                             self.post(Event(Event_Code.HURT))
                             bullet.kill()
 
+            for fellow in self.boss.fellow3s:
+                for bullet in fellow.fellow_bullets:
+                    if bullet.rect.colliderect(self.player.rect):
+                        if self.player.hp > 0:
+                            self.player.hp -= 1
+                            self.post(Event(Event_Code.HURT))
+                            bullet.kill()
+
             """
             >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
             """
@@ -401,41 +466,12 @@ class Boss_Scene1(Listener):
         """
         >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         """  # 自爆飞机效果
-
-        for fellow in self.boss.fellow1s:
-            if fellow.rect.left <= 450:
-                if fellow.rect.left > self.player.rect.left:
-                    fellow.rect.centerx -= (
-                        compute_th(fellow.rect.center, self.player.rect.center)[0]
-                        * fellow.speed
-                    )
-                    fellow.rect.centery -= (
-                        compute_th(fellow.rect.center, self.player.rect.center)[1]
-                        * fellow.speed
-                    )
-            if fellow.rect.colliderect(self.player.rect):
-                self.player.hp -= 2
-                self.post(Event(Event_Code.HURT))
-                self.explosion.add(Fellow_explosion(fellow.rect.center))
-                fellow.kill()
-
-        for fellow in self.boss.fellow2s:
-            if fellow.rect.left <= 450:
-                if fellow.rect.left > self.player.rect.left:
-                    fellow.rect.centerx -= (
-                        compute_th(fellow.rect.center, self.player.rect.center)[0]
-                        * fellow.speed
-                    )
-                    fellow.rect.centery -= (
-                        compute_th(fellow.rect.center, self.player.rect.center)[1]
-                        * fellow.speed
-                    )
-            if fellow.rect.colliderect(self.player.rect):
-                self.player.hp -= 2
-                self.post(Event(Event_Code.HURT))
-                self.explosion.add(Fellow_explosion(fellow.rect.center))
-                fellow.kill()
-
+        self.fellow_explode(self.boss.fellow1s)
+        self.fellow_explode(self.boss.fellow2s)
+        self.fellow_explode(self.boss.fellow3s)
+        self.fellow_touch_wall(self.boss.fellow1s)
+        self.fellow_touch_wall(self.boss.fellow2s)
+        self.fellow_touch_wall(self.boss.fellow3s)
         """
         >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         """
