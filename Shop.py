@@ -225,6 +225,23 @@ class Scene_Shop(Listener):
         else:
             self.skill.image = self.skill_original_image
 
+        if self.bottle.rect.collidepoint(mouse_pos):
+            self.bottle.image = self.bottle_changed_image
+
+            if (
+                self.player.coin >= 1
+                and self.not_buy_bottle == True
+                and mouse_get_pressed[0]
+                and self.num1 >= 20
+            ):
+                self.num1 = 0
+                self.player.coin -= 1
+                self.not_buy_bottle = False
+                self.player.bottle = True
+
+        else:
+            self.bottle.image = self.bottle_original_image
+
         if self.exit.rect.collidepoint(mouse_pos):
             self.exit.image = self.exit_changed_image
             if mouse_get_pressed[0]:
@@ -309,6 +326,8 @@ class Scene_Shop(Listener):
 
                 for j in range(len(self.wrapped_lines) % 8):
                     self.row[j] = self.wrapped_lines[self.rows_num_choice * 8 + j]
+                for j in range(len(self.wrapped_lines) % 8, 8):
+                    self.row[j] = ""
 
             window.blit(
                 font1.render(self.row[0], True, (255, 255, 255)),
@@ -360,6 +379,7 @@ class Scene_Shop(Listener):
             window.blit(self.through.image, self.through.rect)
             window.blit(self.add_bullet_speed.image, self.add_bullet_speed.rect)
             window.blit(self.skill.image, self.skill.rect)
+            window.blit(self.bottle.image, self.bottle.rect)
 
             for i in range(self.player.hp):
                 hp1 = Attribute_showing(

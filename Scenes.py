@@ -969,7 +969,7 @@ class Scene_City(Listener):  # 场景类
         self.first_add3 = True
         self.first_add4 = True
 
-        for i in range(20):
+        for i in range(21):
             hp = Attribute_showing(
                 0,
                 pygame.Rect(i * 25 + 10, 30, self.attribute_size, self.attribute_size),
