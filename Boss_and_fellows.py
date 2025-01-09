@@ -270,8 +270,6 @@ class Fellows(Fixed_object):
     def update(self):
         if self.rect.left <= 10:
             self.kill()
-        if self.hp <= 0:
-            self.kill()
 
 
 class Fellow_attack(Fixed_object):

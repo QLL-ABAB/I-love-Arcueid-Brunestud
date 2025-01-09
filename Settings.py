@@ -68,7 +68,7 @@ class BossSettings:
     boss_bullet_speed = 25
     boss_width = 200
     boss_height = 160
-    boss_hp = 40
+    boss_hp = 80
     boss_animation_speed = 0.2
     # 战斗设置
     boss_attack = 1
@@ -153,6 +153,8 @@ class Game_Path:
     ]
     water_hole_path = r".\assets\tiles\water_hole.png"
 
+    player_sword_light_path = r".\assets\boss_room\player_attack\sword_light.png"
+
     forest_tiles_path = [
         r".\assets\tiles\1.png",
         r".\assets\tiles\2.png",
@@ -226,6 +228,9 @@ class Game_Path:
         r".\assets\player\shoot.png",  # 19
         r".\assets\player\target.png",  # 20
         r".\assets\player\bg.png",  # 21
+        r".\assets\player\energy.png",  # 22
+        r".\assets\player\no_energy.png",  # 23
+        r".\assets\player\hold_time.jpg",  # 24
     ]
 
     game_machine_path = r".\assets\tiles\game_machine.jpg"

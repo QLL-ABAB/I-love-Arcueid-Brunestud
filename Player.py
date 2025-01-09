@@ -30,9 +30,9 @@ class Player1(EntityLike):  # 玩家类
         self.blood_eat = False
         self.through = False
         self.add_bullet_speed = False
-        self.skill = False
+        self.skill = True
 
-        self.bottle = True
+        self.bottle = False
 
         self.player_bullets = pygame.sprite.Group()
         self.add_bullet_num = 0
@@ -192,14 +192,13 @@ class Sword_light(Fixed_object):
     def __init__(self, rect, hold_time: int):
         super().__init__(None, None)
         pygame.sprite.Sprite.__init__(self)
+        self.hold_time = hold_time
         self.image = pygame.transform.scale(
-            pygame.image.load(Game_Path.bullet_path[0]),
-            (50, 20),
+            pygame.image.load(Game_Path.player_sword_light_path),
+            (30 + self.hold_time * 4, 90 + self.hold_time * 12),
         )
-        self.bullet_speed = 10
-        self.rect = pygame.Rect(
-            rect[0] + 10, rect[1] + 30, 10 + hold_time, 30 + hold_time * 3
-        )
+        self.bullet_speed = 25
+        self.rect = self.image.get_rect(center=(rect[0] + 10, rect[1] + 20))
 
     def update(self):
         self.rect.right += self.bullet_speed

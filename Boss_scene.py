@@ -69,9 +69,34 @@ class Boss_Scene1(Listener):
         self.energy_enough = False
         self.shoot_sword = False
         self.energy_num = 0
+        self.energy_block = 0
         self.hold_time = 0
+        self.hold_time_num = 0
         self.sword_light = Sword_light(pygame.Rect(100, 100, 10, 30), 0)  # 光剑
         self.sword_lights = []
+        self.energy_showings = []
+        self.no_energy_showings = []
+        self.hold_time_showings = []
+
+        self.boss_be_attacked_num = 5
+
+        for i in range(30):
+            energy = Attribute_showing(
+                22,
+                pygame.Rect(i * 7 + 43, 150, 7, 14),
+            )
+            self.energy_showings.append(energy)
+
+        for i in range(30):
+            no_energy = Attribute_showing(
+                23,
+                pygame.Rect(i * 7 + 43, 150, 7, 14),
+            )
+            self.no_energy_showings.append(no_energy)
+
+        for i in range(10):
+            hold = Attribute_showing(24, pygame.Rect(i * 12 + 43, 170, 7, 14))
+            self.hold_time_showings.append(hold)
 
         """
         >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -110,10 +135,10 @@ class Boss_Scene1(Listener):
         for j in range(self.window_scale[1] // 40 + 1):
             self.walls.append(Shelt(pygame.Rect(1360, j * 40, 40, 40)))
 
-        for i in range(41):
+        for i in range(81):
             blood = Attribute_showing(
                 8,
-                pygame.Rect(i * 18 + 300, 10, 18, 40),
+                pygame.Rect(i * 9 + 300, 10, 9, 35),
             )
             self.blood_showings.append(blood)
         """
@@ -237,9 +262,9 @@ class Boss_Scene1(Listener):
                 #     self.post(Event(Event_Code.DIE))
                 #     self.post(Event(Event_Code.DRAW))
 
-            """
-            >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-            """  # 玩家子弹效果
+        """
+        >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        """  # 玩家子弹效果
 
         if self.boss.hp > 0:
             for bullet in self.player.player_bullets:
@@ -249,7 +274,7 @@ class Boss_Scene1(Listener):
                             bullet.kill()
 
                 for fellow in self.boss.fellow1s:
-                    if bullet.rect.colliderect(fellow.rect):
+                    if bullet.rect.colliderect(fellow.rect) and fellow.hp > 0:
                         fellow.hp -= self.player.attack
                         fellow.image = fellow_change_color(
                             fellow.image,
@@ -260,7 +285,7 @@ class Boss_Scene1(Listener):
                         bullet.kill()
 
                 for fellow in self.boss.fellow2s:
-                    if bullet.rect.colliderect(fellow.rect):
+                    if bullet.rect.colliderect(fellow.rect) and fellow.hp > 0:
                         fellow.hp -= self.player.attack
                         fellow.image = fellow_change_color(
                             fellow.image,
@@ -281,18 +306,67 @@ class Boss_Scene1(Listener):
             """
             >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
             """  # 光剑制作
+
             if self.player.skill == True:
+                if self.energy_num <= 50:
+                    self.energy_num += 1
+                if self.energy_num == 50 and self.energy_block < 30:
+                    self.energy_block += 1
+                    self.energy_num = 0
+
+                if self.energy_block >= 30:
+                    self.energy_enough = True
+
                 if mouse_get_pressed[0] and self.energy_enough:
-                    self.hold_time += 1
-                    pass
+                    if self.hold_time_num <= 20:
+                        self.hold_time_num += 1
+                    if self.hold_time_num >= 20 and self.hold_time < 10:
+                        self.hold_time_num = 0
+                        self.hold_time += 1
 
-                elif mouse_get_pressed[1]:
+                if mouse_get_pressed[2] and self.energy_enough:
+
                     self.shoot_sword = True
+                    self.energy_block = 0
+                    self.energy_enough = False
+                    self.energy_num = 0
 
-            if self.shoot_sword:
-                self.sword_light = Sword_light(self.player.rect, self.hold_time)
+                if self.shoot_sword:
+                    print(self.hold_time)
+                    self.sword_light = Sword_light(self.player.rect, self.hold_time)
+                    self.sword_lights.append(self.sword_light)
+                    self.shoot_sword = False
+                    self.hold_time = 0
 
-                pass
+            """
+            >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+            """  # 光剑效果
+            for sword_light in self.sword_lights:
+
+                for fellow in self.boss.fellow1s:
+                    for bullet in fellow.fellow_bullets:
+                        if sword_light.rect.colliderect(bullet.rect):
+                            bullet.kill()
+                    if sword_light.rect.colliderect(fellow.rect):
+                        fellow.kill()
+
+                for fellow in self.boss.fellow2s:
+                    for bullet in fellow.fellow_bullets:
+                        if sword_light.rect.colliderect(bullet.rect):
+                            bullet.kill()
+                    if sword_light.rect.colliderect(fellow.rect):
+                        fellow.kill()
+
+                for bullet in self.boss.boss_bullets:
+                    if sword_light.rect.colliderect(bullet.rect):
+                        bullet.kill()
+
+                if sword_light.rect.colliderect(self.boss.rect):
+                    if self.boss_be_attacked_num <= 5:
+                        self.boss_be_attacked_num += 1
+                    if self.boss_be_attacked_num >= 5:
+                        self.boss.hp -= 1
+                        self.boss_be_attacked_num = 0
             """
             >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
             """  # 小敌人子弹效果
@@ -316,6 +390,11 @@ class Boss_Scene1(Listener):
             """
             >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
             """
+
+        """
+        >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        """
+
         if event.code == Event_Code.DRAW:
 
             for tile in self.tiles:  # 遍历所有地图背景图块并描绘
@@ -328,11 +407,43 @@ class Boss_Scene1(Listener):
                 wall.draw()
 
             self.portal_show()
+
             window.blit(self.player.image, self.player.rect)
 
+            self.boss.draw()
+
+            for bullet in self.player.player_bullets:  # 遍历所有玩家子弹并描绘
+                bullet.update()
+                bullet.draw()
+
+            for sword_light in self.sword_lights:
+                sword_light.update()
+                sword_light.draw()
             """
             >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-            """  #   技能栏
+            """  #   属性栏
+
+            for i in range(self.boss.hp):
+                blood = self.blood_showings[i]
+                window.blit(blood.image, blood.rect)
+
+            for i in range(self.player.hp):
+                hp = self.hp_showings[i]
+                window.blit(hp.image, hp.rect)
+
+            if self.player.skill == True:
+                for no_energy in self.no_energy_showings:
+                    window.blit(no_energy.image, no_energy.rect)
+                for i in range(self.energy_block):
+                    window.blit(
+                        self.energy_showings[i].image, self.energy_showings[i].rect
+                    )
+                    if self.energy_enough:
+                        for i in range(self.hold_time):
+                            window.blit(
+                                self.hold_time_showings[i].image,
+                                self.hold_time_showings[i].rect,
+                            )
 
             window.blit(self.attack_showing.image, self.attack_showing.rect)
             attack_num = font1.render(str(self.player.attack), True, (255, 255, 255))
@@ -368,19 +479,6 @@ class Boss_Scene1(Listener):
             """
             >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
             """
-            self.boss.draw()
-
-            for bullet in self.player.player_bullets:  # 遍历所有玩家子弹并描绘
-                bullet.update()
-                bullet.draw()
-
-            for i in range(self.boss.hp):
-                blood = self.blood_showings[i]
-                window.blit(blood.image, blood.rect)
-
-            for i in range(self.player.hp):
-                hp = self.hp_showings[i]
-                window.blit(hp.image, hp.rect)
 
     def portal_show(self):
         self.portal1.update()
