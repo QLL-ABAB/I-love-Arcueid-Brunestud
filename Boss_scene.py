@@ -40,19 +40,19 @@ class Boss_Scene1(Listener):
         self.first_add4 = True
 
         self.attack_showing = Attribute_showing(
-            10, pygame.Rect(40, 60, self.attribute_size * 2, self.attribute_size * 2)
+            10, pygame.Rect(40, 80, self.attribute_size * 2, self.attribute_size * 2)
         )
 
         self.blood_eat = Attribute_showing(
-            6, pygame.Rect(10, 100, self.attribute_size * 2, self.attribute_size * 2)
+            6, pygame.Rect(10, 120, self.attribute_size * 2, self.attribute_size * 2)
         )
 
         self.through = Attribute_showing(
-            12, pygame.Rect(10, 100, self.attribute_size * 2, self.attribute_size * 2)
+            12, pygame.Rect(10, 120, self.attribute_size * 2, self.attribute_size * 2)
         )
 
         self.add_bullet_speed = Attribute_showing(
-            13, pygame.Rect(10, 100, self.attribute_size * 2, self.attribute_size * 2)
+            13, pygame.Rect(10, 120, self.attribute_size * 2, self.attribute_size * 2)
         )
 
         self.player_shoot_limit = 90
@@ -63,7 +63,7 @@ class Boss_Scene1(Listener):
         """  #  我的圣剑
 
         self.skill = Attribute_showing(
-            14, pygame.Rect(10, 100, self.attribute_size * 2, self.attribute_size * 2)
+            14, pygame.Rect(10, 120, self.attribute_size * 2, self.attribute_size * 2)
         )
         self.energy_enough = False
         self.shoot_sword = False
@@ -83,19 +83,19 @@ class Boss_Scene1(Listener):
         for i in range(30):
             energy = Attribute_showing(
                 22,
-                pygame.Rect(i * 7 + 43, 150, 7, 14),
+                pygame.Rect(i * 7 + 43, 170, 7, 14),
             )
             self.energy_showings.append(energy)
 
         for i in range(30):
             no_energy = Attribute_showing(
                 23,
-                pygame.Rect(i * 7 + 43, 150, 7, 14),
+                pygame.Rect(i * 7 + 43, 170, 7, 14),
             )
             self.no_energy_showings.append(no_energy)
 
         for i in range(10):
-            hold = Attribute_showing(24, pygame.Rect(i * 12 + 43, 170, 7, 14))
+            hold = Attribute_showing(24, pygame.Rect(i * 12 + 43, 190, 7, 14))
             self.hold_time_showings.append(hold)
 
         """
@@ -111,7 +111,7 @@ class Boss_Scene1(Listener):
         for i in range(21):
             hp = Attribute_showing(
                 0,
-                pygame.Rect(i * 25 + 40, 20, self.attribute_size, self.attribute_size),
+                pygame.Rect(i * 25 + 40, 50, self.attribute_size, self.attribute_size),
             )
             self.hp_showings.append(hp)
 
@@ -532,7 +532,7 @@ class Boss_Scene1(Listener):
 
             window.blit(self.attack_showing.image, self.attack_showing.rect)
             attack_num = font1.render(str(self.player.attack), True, (255, 255, 255))
-            window.blit(attack_num, (85, 60))
+            window.blit(attack_num, (85, 80))
 
             if self.player.skill == True and self.first_add1 == True:
                 self.skills.append(self.skill)
@@ -555,7 +555,7 @@ class Boss_Scene1(Listener):
                     ),
                     pygame.Rect(
                         40 + i * 50,
-                        100,
+                        120,
                         self.attribute_size * 2,
                         self.attribute_size * 2,
                     ),

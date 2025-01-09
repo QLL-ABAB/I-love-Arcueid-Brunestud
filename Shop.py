@@ -273,6 +273,7 @@ class Scene_Shop(Listener):
                         self.wrapped_lines = textwrap.wrap(
                             self.word_return, width=self.max_width
                         )
+                        print(self.wrapped_lines)
                         self.rows_num = len(self.wrapped_lines) // 8
                         self.rows_left = len(self.wrapped_lines) % 8
 
@@ -304,14 +305,10 @@ class Scene_Shop(Listener):
                 for j in range(8):
                     self.row[j] = self.wrapped_lines[self.rows_num_choice * 8 + j]
 
-                    # print(self.row[j])
-
             elif self.rows_num_choice == self.rows_num:
 
-                for j in range(len(self.wrapped_lines) % 8 - 1):
+                for j in range(len(self.wrapped_lines) % 8):
                     self.row[j] = self.wrapped_lines[self.rows_num_choice * 8 + j]
-
-                    # print(self.row[j])
 
             window.blit(
                 font1.render(self.row[0], True, (255, 255, 255)),
