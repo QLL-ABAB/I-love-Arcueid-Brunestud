@@ -283,6 +283,8 @@ class Boss_Scene1(Listener):
                             5 * self.player.attack,
                             5 * self.player.attack,
                         )
+                        if fellow.hp <= 0:
+                            self.explosion.add(Fellow_explosion(fellow.rect.center))
                         bullet.kill()
 
                 for fellow in self.boss.fellow2s:
@@ -294,6 +296,8 @@ class Boss_Scene1(Listener):
                             5 * self.player.attack,
                             5 * self.player.attack,
                         )
+                        if fellow.hp <= 0:
+                            self.explosion.add(Fellow_explosion(fellow.rect.center))
                         bullet.kill()
 
                 if bullet.rect.colliderect(self.boss.rect):
@@ -349,6 +353,7 @@ class Boss_Scene1(Listener):
                         if sword_light.rect.colliderect(bullet.rect):
                             bullet.kill()
                     if sword_light.rect.colliderect(fellow.rect):
+                        self.explosion.add(Fellow_explosion(fellow.rect.center))
                         fellow.kill()
 
                 for fellow in self.boss.fellow2s:
@@ -356,6 +361,7 @@ class Boss_Scene1(Listener):
                         if sword_light.rect.colliderect(bullet.rect):
                             bullet.kill()
                     if sword_light.rect.colliderect(fellow.rect):
+                        self.explosion.add(Fellow_explosion(fellow.rect.center))
                         fellow.kill()
 
                 for bullet in self.boss.boss_bullets:
@@ -402,11 +408,11 @@ class Boss_Scene1(Listener):
                     fellow.rect.centerx -= (
                         compute_th(fellow.rect.center, self.player.rect.center)[0]
                         * fellow.speed
-                    ) / 2
+                    )
                     fellow.rect.centery -= (
                         compute_th(fellow.rect.center, self.player.rect.center)[1]
                         * fellow.speed
-                    ) / 2
+                    )
             if fellow.rect.colliderect(self.player.rect):
                 self.player.hp -= 2
                 self.post(Event(Event_Code.HURT))

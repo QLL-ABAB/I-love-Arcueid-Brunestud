@@ -24,8 +24,8 @@ class Player1(EntityLike):  # 玩家类
         self.swift = PlayerSettings.player_animation_speed  # 玩家动画效果
         self.right = True  # 玩家是否向右移动
         self.burn = 0  # 燃烧爆条效果
-        self.attack = 999  # PlayerSettings.player_attack  # 玩家的攻击力
-        self.coin = 5  # 玩家的金币数量
+        self.attack = PlayerSettings.player_attack  # 玩家的攻击力
+        self.coin = 999  # 玩家的金币数量
 
         self.blood_eat = False
         self.through = False
