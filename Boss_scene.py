@@ -60,6 +60,7 @@ class Boss_Scene1(Listener):
         else:
             self.player_shoot_limit = 90
 
+        self.explosion = pygame.sprite.Group()
         """
         >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         """  #  我的圣剑
@@ -393,6 +394,44 @@ class Boss_Scene1(Listener):
 
         """
         >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        """  # 自爆飞机效果
+
+        for fellow in self.boss.fellow1s:
+            if fellow.rect.left <= 450:
+                if fellow.rect.left > self.player.rect.left:
+                    fellow.rect.centerx -= (
+                        compute_th(fellow.rect.center, self.player.rect.center)[0]
+                        * fellow.speed
+                    ) / 2
+                    fellow.rect.centery -= (
+                        compute_th(fellow.rect.center, self.player.rect.center)[1]
+                        * fellow.speed
+                    ) / 2
+            if fellow.rect.colliderect(self.player.rect):
+                self.player.hp -= 2
+                self.post(Event(Event_Code.HURT))
+                self.explosion.add(Fellow_explosion(fellow.rect.center))
+                fellow.kill()
+
+        for fellow in self.boss.fellow2s:
+            if fellow.rect.left <= 450:
+                if fellow.rect.left > self.player.rect.left:
+                    fellow.rect.centerx -= (
+                        compute_th(fellow.rect.center, self.player.rect.center)[0]
+                        * fellow.speed
+                    )
+                    fellow.rect.centery -= (
+                        compute_th(fellow.rect.center, self.player.rect.center)[1]
+                        * fellow.speed
+                    )
+            if fellow.rect.colliderect(self.player.rect):
+                self.player.hp -= 2
+                self.post(Event(Event_Code.HURT))
+                self.explosion.add(Fellow_explosion(fellow.rect.center))
+                fellow.kill()
+
+        """
+        >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         """
 
         if event.code == Event_Code.DRAW:
@@ -419,6 +458,10 @@ class Boss_Scene1(Listener):
             for sword_light in self.sword_lights:
                 sword_light.update()
                 sword_light.draw()
+
+            for ex in self.explosion:  # 遍历所有爆炸效果并描绘
+                ex.update()
+                ex.draw()
             """
             >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
             """  #   属性栏

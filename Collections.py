@@ -106,3 +106,10 @@ class Fixed_object(Listener):
 
     def draw(self):
         window.blit(self.image, self.rect)
+
+
+def compute_th(a: tuple[int, int], b: tuple[int, int]):
+    distance = ((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2) ** 0.5
+    th_x = (a[0] - b[0]) / distance
+    th_y = (a[1] - b[1]) / distance
+    return (th_x, th_y)

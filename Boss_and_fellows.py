@@ -230,6 +230,8 @@ class Fellows(Fixed_object):
 
         self.count_num = 0
 
+        self.speed = Fellow_Settings.fellow_speed
+
     def change_speed(self):
         self.speed_y = random.uniform(-1, 1)
 
@@ -272,15 +274,46 @@ class Fellows(Fixed_object):
             self.kill()
 
 
+class Fellow_explosion(Fixed_object):
+    def __init__(self, tuple_pos):
+        super().__init__(None, None)
+        pygame.sprite.Sprite.__init__(self)
+        self.width = Fellow_Settings.explode_size
+        self.height = Fellow_Settings.explode_size
+        self.die_num = 0
+        self.real_die_num = 0
+        self.image = pygame.transform.scale(
+            pygame.image.load(Game_Path.explode_path[0]),
+            (self.width, self.height),
+        )
+        self.rect = self.image.get_rect(center=tuple_pos)
+
+    def update(self):
+        self.die_num += 1
+        if self.die_num >= 4 and self.real_die_num < 4:
+            self.die_num = 0
+            self.real_die_num += 1
+
+        if self.real_die_num >= 4:
+            self.kill()
+
+        self.image = pygame.transform.scale(
+            pygame.image.load(Game_Path.explode_path[self.real_die_num]),
+            (self.width, self.height),
+        )
+
+
 class Fellow_attack(Fixed_object):
     def __init__(self, rect):
         super().__init__(None, None)
         pygame.sprite.Sprite.__init__(self)
+        self.width = Fellow_Settings.fellow_width
+        self.height = Fellow_Settings.fellow_height
         self.image = pygame.transform.scale(
-            pygame.image.load(Game_Path.bullet_path[2]), (40, 40)
+            pygame.image.load(Game_Path.bullet_path[2]), (self.width, self.height)
         )
         self.bullet_speed = Fellow_Settings.fellow_bullet_speed
-        self.rect = pygame.Rect(rect[0], rect[1] + 5, 60, 50)
+        self.rect = pygame.Rect(rect[0], rect[1] + 5, self.width, self.height)
 
     def update(self):
         self.rect.left -= self.bullet_speed

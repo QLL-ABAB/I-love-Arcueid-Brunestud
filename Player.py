@@ -92,7 +92,8 @@ class Player1(EntityLike):  # 玩家类
             if self.hp > 0:
                 copy_player = copy.copy(self.image)
                 copy_player = change_color(copy_player, 255, 0, 0)
-                self.image = copy_player  # 玩家燃烧效果
+                self.image = copy_player
+
             else:
                 self.post(Event(Event_Code.DIE))
                 self.post(Event(Event_Code.DRAW))

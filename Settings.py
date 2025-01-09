@@ -77,11 +77,12 @@ class BossSettings:
 
 
 class Fellow_Settings:
-    fellow_speed = 5
+    fellow_speed = 1
     fellow_width = 40
     fellow_height = 40
     fellow_hp = 10
     fellow_bullet_speed = 5
+    explode_size = 60
 
 
 class Scene_Code(Enum):
@@ -136,6 +137,8 @@ class Event_Code(Enum):
 
     SHOOT_WATER = 24
 
+    SMALL_DIE1 = 25
+    SMALL_DIE2 = 25
     # WHETHER_TO_FIGHT_FALSE = 23
 
 
@@ -316,6 +319,15 @@ class Game_Path:
         r".\assets\boss_room\zhidan\boss_bullet\boss_shock\4.png",
         r".\assets\boss_room\zhidan\boss_bullet\boss_shock\5.png",
         r".\assets\boss_room\zhidan\boss_bullet\boss_shock\6.png",
+    ]
+
+    explode_path = [
+        r".\assets\boss_room\baozha\0.png",
+        r".\assets\boss_room\baozha\1.png",
+        r".\assets\boss_room\baozha\2.png",
+        r".\assets\boss_room\baozha\3.png",
+        r".\assets\boss_room\baozha\4.png",
+        r".\assets\boss_room\baozha\5.png",
     ]
 
 
