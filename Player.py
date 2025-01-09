@@ -30,7 +30,7 @@ class Player1(EntityLike):  # 玩家类
         self.blood_eat = False
         self.through = False
         self.add_bullet_speed = False
-        self.skill = True
+        self.skill = False
 
         self.bottle = False
 

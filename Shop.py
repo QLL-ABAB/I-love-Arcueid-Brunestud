@@ -101,29 +101,20 @@ class Scene_Shop(Listener):
             self.exit_dialog.image, 1.5, 1.5, 1.5
         )
         self.word_return = ""
-        self.word_print1 = ""
         self.word_print1_before = []
-        self.word_print2 = ""
-        self.word_print3 = ""
-        self.word_print4 = ""
-        self.word_print5 = ""
-        self.word_print6 = ""
-        self.word_print7 = ""
-        self.word_print8 = ""
-        self.word_print9 = ""
+
         self.rows_num_choice = 0
         self.rows_num = 0
         self.rows_left = 0
         self.row = [
-            self.word_print1,
-            self.word_print2,
-            self.word_print3,
-            self.word_print4,
-            self.word_print5,
-            self.word_print6,
-            self.word_print7,
-            self.word_print8,
-            self.word_print9,
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
         ]
         self.max_width = 80
         self.wrapped_lines = []
