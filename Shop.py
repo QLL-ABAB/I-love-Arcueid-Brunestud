@@ -118,6 +118,7 @@ class Scene_Shop(Listener):
         ]
         self.max_width = 80
         self.wrapped_lines = []
+        self.answer_show = False
         """
         >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         """
@@ -134,7 +135,7 @@ class Scene_Shop(Listener):
 
             if (
                 self.player.coin >= 1
-                and self.player.hp < 21
+                and self.player.hp < 20
                 and mouse_get_pressed[0]
                 and self.num1 >= 20
             ):
@@ -293,6 +294,7 @@ class Scene_Shop(Listener):
                         print(self.wrapped_lines)
                         self.rows_num = len(self.wrapped_lines) // 8
                         self.rows_left = len(self.wrapped_lines) % 8
+                        self.answer_show = True
 
                     elif event.key == pygame.K_TAB:
                         self.wrapped_lines = []
@@ -305,6 +307,7 @@ class Scene_Shop(Listener):
                         self.row[5] = ""
                         self.row[6] = ""
                         self.row[7] = ""
+                        self.answer_show = False
 
                     elif event.key == pygame.K_UP:
                         if self.rows_num_choice > 0:
@@ -316,13 +319,14 @@ class Scene_Shop(Listener):
 
                     else:
                         self.word_print1_before.append(event.unicode)
+                        print(self.word_print1_before)
                         self.row[0] = "".join(self.word_print1_before)
 
-            if self.rows_num_choice < self.rows_num:
+            if self.rows_num_choice < self.rows_num and self.answer_show:
                 for j in range(8):
                     self.row[j] = self.wrapped_lines[self.rows_num_choice * 8 + j]
 
-            elif self.rows_num_choice == self.rows_num:
+            elif self.rows_num_choice == self.rows_num and self.answer_show:
 
                 for j in range(len(self.wrapped_lines) % 8):
                     self.row[j] = self.wrapped_lines[self.rows_num_choice * 8 + j]

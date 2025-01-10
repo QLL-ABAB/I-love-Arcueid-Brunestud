@@ -109,6 +109,23 @@ class GameManager(Listener):
 
         if event.code == Scene_Code.FOREST:
             self.scene = self.scenes[1]
+            self.scene_fight1 = Scene_Fight(self.mob, 1)
+            self.scene_fight2 = Scene_Fight(self.mob, 2)
+            self.scenes = [
+                self.scene_beginning,
+                self.scene_forest,
+                self.scene_city,
+                self.scene_ending,
+                self.scene_boss,
+                self.scene_win,
+                self.scene_shop,
+                self.scene_greedy_snake,
+                self.scene_game1_over,
+                self.scene_fight1,
+                self.scene_fight2,
+                self.scene_mine_sweeping,
+                self.scene_game2_over,
+            ]
             self.bgm_player.update(Scene_Code.FOREST)
             time.sleep(0.5)
 

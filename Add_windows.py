@@ -6,6 +6,7 @@ import math
 
 from Collections import *
 from Settings import *
+from Openai import *
 
 
 pygame.init()
@@ -48,29 +49,49 @@ class Scene_Fight(Listener):
         self.player_hp_showings = []
         self.enemy_hp_showings = []
 
+        """
+        >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        """  # 按钮
+
         self.button_image1 = pygame.Surface((140, 70))
         self.button_image1.fill((50, 50, 50))
-        self.button_rect1 = self.button_image1.get_rect()
-        self.button_rect1.center = (200, 550)
-
+        self.button_rect1 = self.button_image1.get_rect(center=(200, 550))
         self.button_image1_clicked = pygame.Surface((140, 70))
         self.button_image1_clicked.fill((100, 100, 100))
 
         self.button_image2 = pygame.Surface((140, 70))
         self.button_image2.fill((50, 50, 50))
-        self.button_rect2 = self.button_image2.get_rect()
-        self.button_rect2.center = (350, 550)
-
+        self.button_rect2 = self.button_image2.get_rect(center=(350, 550))
         self.button_image2_clicked = pygame.Surface((140, 70))
         self.button_image2_clicked.fill((100, 100, 100))
 
+        self.button_image3 = pygame.Surface((140, 70))
+        self.button_image3.fill((50, 50, 50))
+        self.button_rect3 = self.button_image3.get_rect(center=(1250, 150))
+        self.button_image3_clicked = pygame.Surface((140, 70))
+        self.button_image3_clicked.fill((100, 100, 100))
+
+        self.button_image4 = pygame.Surface((140, 70))
+        self.button_image4.fill((50, 50, 50))
+        self.button_rect4 = self.button_image4.get_rect(center=(700, 200))
+        # self.button_image4_clicked = pygame.Surface((140, 70))
+        # self.button_image4_clicked.fill((100, 100, 100))
+
         self.button_text1 = font1.render("FIGHT", True, (255, 255, 255))
         self.button_text2 = font1.render("DEFEND", True, (255, 255, 255))
-        self.button_text1_rect = self.button_text1.get_rect()
-        self.button_text2_rect = self.button_text2.get_rect()
-        self.button_text1_rect.center = (200, 550)
-        self.button_text2_rect.center = (350, 550)
+        self.button_text3 = font1.render("RTPS", True, (255, 255, 255))
+        self.button_text4 = font1.render("代理中", True, (255, 255, 255))
+        self.button_text1_rect = self.button_text1.get_rect(center=(200, 550))
+        self.button_text2_rect = self.button_text2.get_rect(center=(350, 550))
+        self.button_text3_rect = self.button_text3.get_rect(center=(1250, 150))
+        self.button_text4_rect = self.button_text4.get_rect(center=(700, 200))
 
+        self.daili = -1
+        self.count_num = 0
+
+        """
+        >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        """
         self.attack_harder = False
         self.attack_harder_image = pygame.transform.scale(
             pygame.image.load(Game_Path.attribute_path[15]),
@@ -134,22 +155,32 @@ class Scene_Fight(Listener):
 
         self.type = type
 
+    def ai_choose(self):
+        Question = "choose 1 or 2 randomly ,just respond with one number"
+        return int(AI_talk(Question))
+
     def listen(self, event: Event):
         super().listen(event)
 
+        if self.count_num < 40:
+            self.count_num += 1
+
         if event.code == Event_Code.DRAW:
+            """
+            >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+            """  # 判断是否可以继续
 
             if self.player_real.hp <= 0:
                 self.post(Event(Scene_Code.GAME_OVER))
-
-                self.enemy_hp = [13, 8]
 
             if self.enemy_hp[self.type - 1] <= 0:
                 self.player_real.coin += self.coin_add[self.type - 1]
                 self.post(Event(Scene_Code.FOREST))
                 self.player_real.speed = PlayerSettings.player_Speed
-                self.enemy_hp = [13, 8]
-                # self.post(Event(Event_Code.WHETHER_TO_FIGHT_FALSE))
+
+            """
+            >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+            """  # 背景
 
             window.blit(self.background, (0, 0))
 
@@ -160,6 +191,10 @@ class Scene_Fight(Listener):
             for i in range(self.enemy_hp[self.type - 1]):
                 hp = self.enemy_hp_showings[i]
                 window.blit(hp.image, hp.rect)
+
+            """
+            >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+            """  # 自动移动
 
             if self.player_right and self.player_act:
                 self.player.rect = (
@@ -262,35 +297,79 @@ class Scene_Fight(Listener):
             if self.attack_harder:
                 window.blit(self.attack_harder_image, self.attack_harder_rect)
 
-            if self.choose:
-                mouse = pygame.mouse.get_pos()
-                mouse_pressed = pygame.mouse.get_pressed()
+            """
+            >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+            """  # 选择
 
-                if self.button_rect1.collidepoint(mouse):
-                    window.blit(self.button_image1_clicked, self.button_rect1)
-                    if mouse_pressed[0]:
+            mouse = pygame.mouse.get_pos()
+            mouse_pressed = pygame.mouse.get_pressed()
+            if self.choose:
+                if self.daili != 1:
+                    if self.button_rect1.collidepoint(mouse):
+                        window.blit(self.button_image1_clicked, self.button_rect1)
+                        if mouse_pressed[0]:
+                            self.choose = False
+                            self.player_swing = True
+                            self.player_defend = False
+                            self.player_act = True
+                    else:
+                        window.blit(self.button_image1, self.button_rect1)
+
+                else:
+                    if self.ai_choose() == 1:
                         self.choose = False
                         self.player_swing = True
+                        self.player_defend = False
                         self.player_act = True
 
-                else:
-                    window.blit(self.button_image1, self.button_rect1)
+                if self.daili != 1:
+                    if self.button_rect2.collidepoint(mouse) and self.daili != 1:
+                        window.blit(self.button_image2_clicked, self.button_rect2)
+                        if mouse_pressed[0]:
+                            self.choose = False
+                            self.player_defend = True
+                            self.player_swing = False
+                            self.enemy_act = True
+                            self.enemy_left = True
+                    else:
+                        window.blit(self.button_image2, self.button_rect2)
 
-                if self.button_rect2.collidepoint(mouse):
-                    window.blit(self.button_image2_clicked, self.button_rect2)
-                    if mouse_pressed[0]:
+                else:
+                    if self.ai_choose() == 2:
                         self.choose = False
                         self.player_defend = True
+                        self.player_swing = False
                         self.enemy_act = True
                         self.enemy_left = True
-                else:
-                    window.blit(self.button_image2, self.button_rect2)
 
-                window.blit(self.button_text1, self.button_text1_rect)
-                window.blit(self.button_text2, self.button_text2_rect)
+                if self.daili != 1:
+                    window.blit(self.button_text1, self.button_text1_rect)
+                    window.blit(self.button_text2, self.button_text2_rect)
+
+            if (
+                self.button_rect3.collidepoint(mouse)
+                and mouse_pressed[0]
+                and self.count_num >= 40
+            ):
+                self.daili = 1
+                self.count_num = 0
+
+            if self.daili == 1:
+                window.blit(self.button_image3_clicked, self.button_rect3)
+            else:
+                window.blit(self.button_image3, self.button_rect3)
+
+            window.blit(self.button_text3, self.button_text3_rect)
+
+            if self.daili == 1:
+                window.blit(self.button_image4, self.button_rect4)
+                window.blit(self.button_text4, self.button_text4_rect)
+
+            """
+            >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+            """  #  角色自动化程序
 
             if self.player_swing:
-
                 if (self.player_right == False and self.player_act == True) or (
                     self.enemy_left == False and self.enemy_act == True
                 ):
