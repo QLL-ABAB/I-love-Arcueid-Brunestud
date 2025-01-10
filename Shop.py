@@ -119,6 +119,7 @@ class Scene_Shop(Listener):
         self.max_width = 80
         self.wrapped_lines = []
         self.answer_show = False
+        self.words_input_show = []
         """
         >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         """
@@ -284,19 +285,27 @@ class Scene_Shop(Listener):
                             self.row[0] = "".join(self.word_print1_before)
 
                     elif event.key == pygame.K_KP_ENTER or event.key == pygame.K_RETURN:
-                        self.word_input = self.row[0]
-                        self.word_print1_before = []
-                        self.row[0] = ""
+
+                        self.rows_num_choice = 0
+
+                        self.word_input = "".join(self.word_print1_before)
+                        # self.row[0] = ""
                         self.word_return = AI_talk(self.word_input)
                         self.wrapped_lines = textwrap.wrap(
                             self.word_return, width=self.max_width
                         )
-                        print(self.wrapped_lines)
+                        # print(self.wrapped_lines)
                         self.rows_num = len(self.wrapped_lines) // 8
                         self.rows_left = len(self.wrapped_lines) % 8
                         self.answer_show = True
+                        self.word_print1_before = []
+                        self.word_input = ""
 
                     elif event.key == pygame.K_TAB:
+                        self.rows_num_choice = 0
+                        self.word_print1_before = []
+                        self.rows_num = 0
+
                         self.wrapped_lines = []
                         self.word_print1_before = []
                         self.row[0] = ""
@@ -319,14 +328,17 @@ class Scene_Shop(Listener):
 
                     else:
                         self.word_print1_before.append(event.unicode)
-                        print(self.word_print1_before)
-                        self.row[0] = "".join(self.word_print1_before)
+                        self.wrapped_lines = textwrap.wrap(
+                            "".join(self.word_print1_before), width=self.max_width
+                        )
+                        self.rows_num = len(self.wrapped_lines) // 8
+                        self.rows_left = len(self.wrapped_lines) % 8
 
-            if self.rows_num_choice < self.rows_num and self.answer_show:
+            if self.rows_num_choice < self.rows_num:
                 for j in range(8):
                     self.row[j] = self.wrapped_lines[self.rows_num_choice * 8 + j]
 
-            elif self.rows_num_choice == self.rows_num and self.answer_show:
+            elif self.rows_num_choice == self.rows_num:
 
                 for j in range(len(self.wrapped_lines) % 8):
                     self.row[j] = self.wrapped_lines[self.rows_num_choice * 8 + j]
