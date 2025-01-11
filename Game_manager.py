@@ -9,6 +9,8 @@ from Game_scene2 import *
 from Player import *
 from Scenes import *
 from Boss_scene import Boss_Scene1
+from Game_scene2 import * 
+
 
 pygame.init()
 
@@ -45,6 +47,7 @@ class GameManager(Listener):
         self.judge_first_time = True
         self.scene_mine_sweeping = Mine_sweeping(self.mob)
         self.scene_game2_over = Game2_Over(self.mob)
+
 
         self.scenes = [
             self.scene_beginning,
@@ -171,11 +174,11 @@ class GameManager(Listener):
 
         if event.code == Scene_Code.GAME_MINE_SWEEPING:
             self.scene = self.scenes[11]  # 扫雷场景
-            time.sleep(0.5)
+            time.sleep(0)
 
         if event.code == Scene_Code.GAME2_OVER:
             self.scene = self.scenes[12]  # 第1关结束场景
-            time.sleep(0.2)
+            time.sleep(0)
 
         if event.code == Scene_Code.FRESH_ENEMY:
             self.scene_forest = Scene_Forest(self.mob)

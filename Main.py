@@ -91,6 +91,23 @@ if __name__ == "__main__":
                     elif event.key == pygame.K_ESCAPE:
                         game_manager.scene_greedy_snake.game_close = True
 
+        if game_manager.scene == game_manager.scene_mine_sweeping:
+            for event in event_get:
+                if event.type == MOUSEBUTTONDOWN:
+                    x, y = event.pos[0] // game_manager.scene_mine_sweeping.tile_size, event.pos[1] // game_manager.scene_mine_sweeping.tile_size
+                    if event.button == 1:  # 左键点击
+                        if game_manager.scene_mine_sweeping.board[y][x] == -1:
+                            game_manager.scene_mine_sweeping.game_close = True
+                        else:
+                            game_manager.scene_mine_sweeping.revealed[y][x] = True
+                            game_manager.scene_mine_sweeping.dict[(x, y)] = 1  # 记录已经打开的格子
+                    elif event.button == 3:  # 右键点击
+                        if (x, y) in game_manager.scene_mine_sweeping.dict and game_manager.scene_mine_sweeping.dict[(x, y)] != 1:
+                            game_manager.scene_mine_sweeping.dict[(x, y)] = 2  # 记录已经标记的格子
+                            game_manager.scene_mine_sweeping.revealed[y][x] = not game_manager.scene_mine_sweeping.revealed[y][x]  # 翻转格子
+                        elif (x, y) in game_manager.scene_mine_sweeping.dict and game_manager.scene_mine_sweeping.dict[(x, y)] == 1:
+                            pass
+
         if game_manager.scene == game_manager.scene_game1_over:
             for event in event_get:
                 if event.type == pygame.KEYDOWN:
