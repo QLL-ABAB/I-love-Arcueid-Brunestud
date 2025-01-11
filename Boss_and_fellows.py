@@ -51,13 +51,14 @@ class Boss1(Fixed_object):
         self.boss_bullets1 = pygame.sprite.Group()
 
         self.boss_die_num = 0
-        self.num = 0
+        self.die_real_num = 0
         self.boss_animaton = True
         self.move_x = 0
         self.move_y = 0
 
         self.fellow1s = pygame.sprite.Group()
         self.fellow2s = pygame.sprite.Group()
+        self.fellow3s = pygame.sprite.Group()
 
     def call_the_fellows(self):
         if self.hp > 0:
@@ -66,6 +67,8 @@ class Boss1(Fixed_object):
                 self.fellow1s.add(Fellows(0))
             if random_num == 4 and len(self.fellow2s) <= 6:
                 self.fellow2s.add(Fellows(1))
+            if random_num == 6 and len(self.fellow3s) <= 6:
+                self.fellow3s.add(Fellows(2))
 
     def listen(self, event: Event):
 
@@ -80,6 +83,8 @@ class Boss1(Fixed_object):
                 for fellow in self.fellow1s:
                     fellow.change_speed()
                 for fellow in self.fellow2s:
+                    fellow.change_speed()
+                for fellow in self.fellow3s:
                     fellow.change_speed()
 
             if self.hp > 0:
@@ -109,17 +114,17 @@ class Boss1(Fixed_object):
 
         elif event.code == Event_Code.BOSS_DIE and self.boss_animaton:
             self.boss_die_num += 1
-            if self.boss_die_num >= 100:
+            if self.boss_die_num >= 4:
                 self.boss_die_num = 0
-                self.num += 1
+                self.die_real_num += 1
 
             self.image = pygame.transform.scale(
-                pygame.image.load(Game_Path.baozha_path[self.num]),
+                pygame.image.load(Game_Path.baozha_path[self.die_real_num]),
                 (self.width, self.height),
             )  # boss死亡动画效果
 
             self.speed = 0
-            if self.num >= 8:
+            if self.die_real_num >= 8:
                 self.post(Event(Scene_Code.WIN))
                 self.boss_animaton = False
 
@@ -161,7 +166,6 @@ class Boss1(Fixed_object):
                 fellow.auto_move()
                 fellow.auto_fire()
                 window.blit(fellow.image, fellow.rect)
-            fellow.update()
             fellow.draw()
 
         for fellow in self.fellow2s:
@@ -170,7 +174,14 @@ class Boss1(Fixed_object):
                 fellow.auto_move()
                 fellow.auto_fire()
                 window.blit(fellow.image, fellow.rect)
-            fellow.update()
+            fellow.draw()
+
+        for fellow in self.fellow3s:
+            if fellow.hp > 0:
+
+                fellow.auto_move()
+                fellow.auto_fire()
+                window.blit(fellow.image, fellow.rect)
             fellow.draw()
 
 
@@ -230,6 +241,8 @@ class Fellows(Fixed_object):
 
         self.count_num = 0
 
+        self.speed = Fellow_Settings.fellow_speed
+
     def change_speed(self):
         self.speed_y = random.uniform(-1, 1)
 
@@ -239,7 +252,7 @@ class Fellows(Fixed_object):
         if self.rect.left >= 650:
             if (self.rect.center[1] + self.speed_y * 5) >= 60 and (
                 self.rect.center[1] + self.speed_y * 5
-            ) <= 880:
+            ) <= 860:
                 self.rect.top += self.speed_y * 5
 
         if self.rect.left < 650 and self.rect.left > 520:
@@ -272,17 +285,51 @@ class Fellows(Fixed_object):
             self.kill()
 
 
+class Fellow_explosion(Fixed_object):
+    def __init__(self, tuple_pos):
+        super().__init__(None, None)
+        pygame.sprite.Sprite.__init__(self)
+        self.width = Fellow_Settings.explode_size
+        self.height = Fellow_Settings.explode_size
+        self.die_num = 0
+        self.real_die_num = 0
+        self.image = pygame.transform.scale(
+            pygame.image.load(Game_Path.explode_path[0]),
+            (self.width, self.height),
+        )
+        self.rect = self.image.get_rect(center=tuple_pos)
+
+    def update(self):
+        self.die_num += 1
+        if self.die_num >= 4 and self.real_die_num < 4:
+            self.die_num = 0
+            self.real_die_num += 1
+
+        if self.real_die_num >= 4:
+            self.kill()
+
+        self.image = pygame.transform.scale(
+            pygame.image.load(Game_Path.explode_path[self.real_die_num]),
+            (self.width, self.height),
+        )
+
+
 class Fellow_attack(Fixed_object):
     def __init__(self, rect):
         super().__init__(None, None)
         pygame.sprite.Sprite.__init__(self)
+        self.width = Fellow_Settings.fellow_width
+        self.height = Fellow_Settings.fellow_height
         self.image = pygame.transform.scale(
-            pygame.image.load(Game_Path.bullet_path[2]), (40, 40)
+            pygame.image.load(Game_Path.bullet_path[2]), (self.width, self.height)
         )
         self.bullet_speed = Fellow_Settings.fellow_bullet_speed
-        self.rect = pygame.Rect(rect[0], rect[1] + 5, 60, 50)
+        self.rect = pygame.Rect(rect[0], rect[1] + 5, self.width, self.height)
 
     def update(self):
         self.rect.left -= self.bullet_speed
         if self.rect.left <= -8:
             self.kill()
+
+
+# class Collapse():

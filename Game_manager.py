@@ -1,11 +1,11 @@
 import pygame
 import time
 from Collections import *
-from Settings import *
 from Bgm_player import *
 from Add_windows import *
 from Shop import *
 from Game_scene import *
+from Game_scene2 import *
 from Player import *
 from Scenes import *
 from Boss_scene import Boss_Scene1
@@ -47,6 +47,7 @@ class GameManager(Listener):
         self.judge_first_time = True
         self.scene_mine_sweeping = Mine_sweeping(self.mob)
         self.scene_game2_over = Game2_Over(self.mob)
+
 
         self.scenes = [
             self.scene_beginning,
@@ -110,6 +111,23 @@ class GameManager(Listener):
 
         if event.code == Scene_Code.FOREST:
             self.scene = self.scenes[1]
+            self.scene_fight1 = Scene_Fight(self.mob, 1)
+            self.scene_fight2 = Scene_Fight(self.mob, 2)
+            self.scenes = [
+                self.scene_beginning,
+                self.scene_forest,
+                self.scene_city,
+                self.scene_ending,
+                self.scene_boss,
+                self.scene_win,
+                self.scene_shop,
+                self.scene_greedy_snake,
+                self.scene_game1_over,
+                self.scene_fight1,
+                self.scene_fight2,
+                self.scene_mine_sweeping,
+                self.scene_game2_over,
+            ]
             self.bgm_player.update(Scene_Code.FOREST)
             time.sleep(0.5)
 

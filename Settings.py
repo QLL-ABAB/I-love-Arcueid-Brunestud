@@ -68,7 +68,7 @@ class BossSettings:
     boss_bullet_speed = 25
     boss_width = 200
     boss_height = 160
-    boss_hp = 40
+    boss_hp = 80
     boss_animation_speed = 0.2
     # 战斗设置
     boss_attack = 1
@@ -77,11 +77,12 @@ class BossSettings:
 
 
 class Fellow_Settings:
-    fellow_speed = 5
+    fellow_speed = 1
     fellow_width = 40
     fellow_height = 40
     fellow_hp = 10
     fellow_bullet_speed = 5
+    explode_size = 60
 
 
 class Scene_Code(Enum):
@@ -134,6 +135,10 @@ class Event_Code(Enum):
 
     HURT = 23
 
+    SHOOT_WATER = 24
+
+    SMALL_DIE1 = 25
+    SMALL_DIE2 = 25
     # WHETHER_TO_FIGHT_FALSE = 23
 
 
@@ -149,6 +154,10 @@ class Game_Path:
         r".\assets\boss_room\boss_fellows\1.png",
         r".\assets\boss_room\boss_fellows\2.png",
     ]
+    water_hole_path = r".\assets\tiles\water_hole.png"
+    relive_path = r".\assets\tiles\relive.png"
+
+    player_sword_light_path = r".\assets\boss_room\player_attack\sword_light.png"
 
     forest_tiles_path = [
         r".\assets\tiles\1.png",
@@ -198,8 +207,6 @@ class Game_Path:
     fire_path = [
         r".\assets\tiles\fire1.png",
         r".\assets\tiles\fire2.png",
-        r".\assets\tiles\fire3.png",
-        r".\assets\tiles\fire4.png",
     ]
 
     attribute_path = [
@@ -225,6 +232,9 @@ class Game_Path:
         r".\assets\player\shoot.png",  # 19
         r".\assets\player\target.png",  # 20
         r".\assets\player\bg.png",  # 21
+        r".\assets\player\energy.png",  # 22
+        r".\assets\player\no_energy.png",  # 23
+        r".\assets\player\hold_time.jpg",  # 24
     ]
 
     game_machine_path = r".\assets\tiles\game_machine.jpg"
@@ -310,6 +320,15 @@ class Game_Path:
         r".\assets\boss_room\zhidan\boss_bullet\boss_shock\4.png",
         r".\assets\boss_room\zhidan\boss_bullet\boss_shock\5.png",
         r".\assets\boss_room\zhidan\boss_bullet\boss_shock\6.png",
+    ]
+
+    explode_path = [
+        r".\assets\boss_room\baozha\0.png",
+        r".\assets\boss_room\baozha\1.png",
+        r".\assets\boss_room\baozha\2.png",
+        r".\assets\boss_room\baozha\3.png",
+        r".\assets\boss_room\baozha\4.png",
+        r".\assets\boss_room\baozha\5.png",
     ]
 
 

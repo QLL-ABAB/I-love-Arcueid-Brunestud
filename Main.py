@@ -109,6 +109,13 @@ if __name__ == "__main__":
                         elif (x, y) in game_manager.scene_mine_sweeping.dict and game_manager.scene_mine_sweeping.dict[(x, y)] == 1:
                             pass
 
+        if game_manager.scene == game_manager.scene_game1_over:
+            for event in event_get:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_o:
+                        add_event(Event(Scene_Code.CITY))
+                    if event.key == pygame.K_SPACE:
+                        add_event(Event(Scene_Code.GAME_GREEDY_SNAKE))
 
         """
         >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -133,13 +140,8 @@ if __name__ == "__main__":
         ):
             add_event(Event(Event_Code.BOSS_DIE))
 
-        # if running == False:
-        #     pygame.quit()
-        #     sys.exit()
-        #     exit()
-
         """
-        >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         """
 
         while event_queue:  # 依次将事件队列中的事件取出并处理
@@ -158,10 +160,10 @@ if __name__ == "__main__":
             if game_manager.scene == game_manager.scene_boss:
                 game_manager.scene.boss.listen(event)
 
-            if game_manager.scene == game_manager.scene_shop:
-                game_manager.scene_shop.word_window(
-                    game_manager.scene_shop.word_window_judge, event_get
-                )
+        if game_manager.scene == game_manager.scene_shop:
+            game_manager.scene_shop.word_window(
+                game_manager.scene_shop.word_window_judge, event_get
+            )
 
         pygame.display.flip()  # 缓冲绘制到屏幕上
 

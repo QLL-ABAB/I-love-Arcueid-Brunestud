@@ -18,6 +18,7 @@ class Scene_Forest(Listener):  # 场景类
         self.trees = []
         self.tiles = []
         self.fires = []
+        self.die_fires = []
         self.hp_showings = []
         self.burn_showings = []
         self.enemy2s = []
@@ -69,6 +70,8 @@ class Scene_Forest(Listener):  # 场景类
             17, pygame.Rect(5, 180, self.attribute_size * 2, self.attribute_size * 2)
         )
 
+        self.portal_num = 0
+
         """
         >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         """  # 看这里 （定义的水瓶有关的变量） （可以自己加更多的变量）
@@ -81,8 +84,10 @@ class Scene_Forest(Listener):  # 场景类
         self.shoot = Attribute_showing(19, pygame.Rect(1060, 800, 80, 80))
         self.shoot_bg = Attribute_showing(21, pygame.Rect(1045, 785, 110, 110))
 
-        self.shoot_target = Attribute_showing(20, pygame.Rect(1050, 790, 60, 60))
+        self.shoot_target = Attribute_showing(20, pygame.Rect(1050, 790, 80, 80))
         self.ready_to_shoot = False
+        self.water_holes = []
+
         """
         >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         """
@@ -102,6 +107,9 @@ class Scene_Forest(Listener):  # 场景类
             self.player.rect.centery,
         )
 
+        """
+        >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        """  # 水坑
         self.water1 = set()
         self.water2 = set()
         self.water3 = set()
@@ -205,7 +213,47 @@ class Scene_Forest(Listener):  # 场景类
                 )
                 self.water_tiles.append(water_tile)
 
+        """
+        >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        """  # 重生点
+
+        while True:
+            self.judge_water = True
+            self.relife = Relife(
+                pygame.Rect(
+                    random.randint(100, self.map_range[0] - 100),
+                    random.randint(100, self.map_range[1] - 100),
+                    100,
+                    100,
+                )
+            )
+
+            for water in self.water_tiles:
+                if self.relife.rect.colliderect(water.rect):
+                    self.judge_water = False
+
+            if (
+                not self.relife.rect.colliderect(self.portal1.rect)
+                and not self.relife.rect.colliderect(self.portal3.rect)
+                and not self.relife.rect.colliderect(self.player.rect)
+                and self.judge_water
+            ):
+                break
+
+        self.relife_proof_max = pygame.Surface((125, 125))
+        self.relife_proof_max.fill((255, 255, 255))
+        self.relife_proof_max_rect = self.relife_proof_max.get_rect(
+            center=(self.relife.rect.centerx, self.relife.rect.centery)
+        )
+
+        self.relife_proof = pygame.Surface((40, 35))
+        self.relife_proof.fill((255, 255, 255))
+        self.relife_proof_rect = self.relife_proof.get_rect(
+            center=(self.relife.rect.centerx, self.relife.rect.centery - 10)
+        )
+
         # 在地图里随机生成一些障碍物
+
         for _ in range(20):
             tree = Tree(
                 pygame.Rect(
@@ -215,6 +263,10 @@ class Scene_Forest(Listener):  # 场景类
                     40,
                 )
             )
+            collide_with_relife = False
+            if self.relife_proof_max_rect.colliderect(tree.rect):
+                collide_with_relife = True
+
             collide_with_water = False
             for water in self.water_tiles:
                 if tree.rect.colliderect(water.rect):
@@ -231,6 +283,7 @@ class Scene_Forest(Listener):  # 场景类
                 and not tree.rect.colliderect(self.portal3.rect)
                 and not collide_with_water
                 and not collide_with_tree
+                and not collide_with_relife
             ):
                 self.trees.append(tree)
 
@@ -244,6 +297,10 @@ class Scene_Forest(Listener):  # 场景类
                 ),
                 self.player,
             )
+
+            collide_with_relife = False
+            if self.relife_proof_max_rect.colliderect(fire.rect):
+                collide_with_relife = True
 
             collide_with_water = False
             for water in self.water_tiles:
@@ -267,6 +324,7 @@ class Scene_Forest(Listener):  # 场景类
                 and not collide_with_tree
                 and not collide_with_water
                 and not collide_with_fire
+                and not collide_with_relife
             ):
                 self.fires.append(fire)
 
@@ -303,6 +361,9 @@ class Scene_Forest(Listener):  # 场景类
             for water in self.water_tiles:
                 if enemy2.rect.colliderect(water.rect):
                     collide_with_obstacles = True
+
+            if self.relife_proof_max_rect.colliderect(enemy2.rect):
+                collide_with_obstacles = True
 
             collide_with_enemy2 = False
             for e2 in self.enemy2s:
@@ -345,6 +406,9 @@ class Scene_Forest(Listener):  # 场景类
             for water in self.water_tiles:
                 if enemy2.rect.colliderect(water.rect):
                     collide_with_obstacles = True
+
+            if self.relife_proof_max_rect.colliderect(enemy2.rect):
+                collide_with_obstacles = True
 
             collide_with_enemy2 = False
             for e2 in self.enemy2s:
@@ -392,6 +456,9 @@ class Scene_Forest(Listener):  # 场景类
                 if enemy1.rect.colliderect(water.rect):
                     collide_with_obstacles = True
 
+            if self.relife_proof_max_rect.colliderect(enemy1.rect):
+                collide_with_obstacles = True
+
             collide_with_enemy1 = False
             for e1 in self.enemy1s:
                 if enemy1.rect.colliderect(e1.rect):
@@ -429,6 +496,9 @@ class Scene_Forest(Listener):  # 场景类
             for fire in self.fires:
                 if enemy1.rect.colliderect(fire.rect):
                     collide_with_obstacles = True
+
+            if self.relife_proof_max_rect.colliderect(enemy1.rect):
+                collide_with_obstacles = True
 
             for e2 in self.enemy2s:
                 if enemy1.rect.colliderect(e2.rect):
@@ -505,6 +575,9 @@ class Scene_Forest(Listener):  # 场景类
                     can_move = 0
                     break
 
+            if self.relife_proof_rect.colliderect(target_rect):
+                can_move = 0
+
             if can_move:
                 self.post(Event(Event_Code.CAN_MOVE, event.body))
 
@@ -512,10 +585,22 @@ class Scene_Forest(Listener):  # 场景类
         >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         """
         if event.code == Event_Code.CHECK_PORTAL1:
-            if self.portal1.rect.colliderect(self.player.rect) and keys[pygame.K_e]:
+            if self.portal_num <= 20:
+                self.portal_num += 1
+            if (
+                self.portal1.rect.colliderect(self.player.rect)
+                and keys[pygame.K_e]
+                and self.portal_num >= 20
+            ):
+                self.portal_num = 0
                 self.post(Event(Scene_Code.CITY))
 
-            if self.portal3.rect.colliderect(self.player.rect) and keys[pygame.K_e]:
+            if (
+                self.portal3.rect.colliderect(self.player.rect)
+                and keys[pygame.K_e]
+                and self.portal_num >= 20
+            ):
+                self.portal_num = 0
                 self.post(Event(Scene_Code.BOSS))
 
         """
@@ -526,6 +611,14 @@ class Scene_Forest(Listener):  # 场景类
             if self.player.burn > 0:
                 self.player.burn -= 1
             for fire in self.fires:
+                for water_hole in self.water_holes:
+                    if fire.rect.colliderect(water_hole.rect):
+                        fire.image = pygame.transform.scale(
+                            pygame.image.load(Game_Path.fire_path[1]), (40, 40)
+                        )
+                        self.fires.remove(fire)
+                        self.die_fires.append(fire)
+
                 if fire.rect.colliderect(self.player.rect):
                     self.post(Event(Event_Code.BURN))
 
@@ -539,13 +632,20 @@ class Scene_Forest(Listener):  # 场景类
 
             # window.blit(self.rect_proof, self.rect_proof_rect)
 
-            for tree in self.trees:  # 遍历所有障碍物并描绘
-                tree.draw(self.camera)
+            for water_hole in self.water_holes:  # 遍历所有水洞并描绘
+                water_hole.draw(self.camera)
+                water_hole.update()
 
             for water in self.water_tiles:  # 遍历所有水并描绘
                 water.draw(self.camera)
 
+            self.relife.draw(self.camera)
+
+            for tree in self.trees:  # 遍历所有障碍物并描绘
+                tree.draw(self.camera)
             for fire in self.fires:  # 遍历所有火焰并描绘
+                fire.draw(self.camera)
+            for fire in self.die_fires:
                 fire.draw(self.camera)
             for enemy2 in self.enemy2s:  # 遍历所有敌人并描绘
                 enemy2.draw(self.camera)
@@ -631,6 +731,7 @@ class Scene_Forest(Listener):  # 场景类
                     )
 
                 # 判断能否加水
+                self.can_get_water = False
                 for water in self.water_tiles:
                     if (
                         self.player.rect.colliderect(water.rect)
@@ -647,14 +748,15 @@ class Scene_Forest(Listener):  # 场景类
                         window.blit(self.shoot.image, self.shoot.rect)
                         window.blit(self.shoot_bg.image, self.shoot_bg.rect)
                         if (
-                            self.shoot.rect.collidepoint(mouse_pos)
+                            self.shoot_bg.rect.collidepoint(mouse_pos)
                             and mouse_get_pressed[0]
                             and self.bottle_num >= 15
                         ):
+
                             self.bottle_num = 0
                             if not self.ready_to_shoot:
                                 self.ready_to_shoot = True
-                            if self.ready_to_shoot:
+                            elif self.ready_to_shoot:
                                 self.ready_to_shoot = False
 
                     if (
@@ -671,9 +773,61 @@ class Scene_Forest(Listener):  # 场景类
                             self.can_get_water = False
                     """
                     >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                    """  # 看这里
+                    """
                     if self.ready_to_shoot:
-                        pass
+                        player_at_screen = Compute_tuple.tuple_sub(
+                            (
+                                self.player.rect[0] + self.player.rect[2] / 2,
+                                self.player.rect[1] + self.player.rect[3] / 2,
+                            ),
+                            self.camera,
+                        )
+                        mouse_to_player = Compute_tuple.tuple_sub(
+                            mouse_pos, player_at_screen
+                        )
+                        mouse_distance = (
+                            mouse_to_player[0] ** 2 + mouse_to_player[1] ** 2
+                        ) ** 0.5
+                        if mouse_distance > 120:
+                            scale = 120 / mouse_distance
+                            mouse_to_player = (
+                                int(mouse_to_player[0] * scale),
+                                int(mouse_to_player[1] * scale),
+                            )
+                        shoot_position = (
+                            self.player.rect[0]
+                            + self.player.rect[2] / 2
+                            + mouse_to_player[0],
+                            self.player.rect[1]
+                            + self.player.rect[3] / 2
+                            + mouse_to_player[1],
+                        )
+                        shoot_position_screen = Compute_tuple.tuple_sub(
+                            shoot_position, self.camera
+                        )
+                        window.blit(
+                            self.shoot_target.image,
+                            self.shoot_target.image.get_rect(
+                                center=shoot_position_screen
+                            ),
+                            # pygame.Rect(
+                            #     shoot_position_screen[0],
+                            #     shoot_position_screen[1],
+                            #     60,
+                            #     60,
+                        )
+                        if keys[pygame.K_SPACE]:
+                            # self.post(
+                            #     Event(
+                            #         Event_Code.SHOOT_WATER,
+                            #         {"POS": shoot_position_screen},
+                            #     )
+                            # )
+
+                            water_hole = Water_hole(shoot_position)
+                            self.water_holes.append(water_hole)
+                            self.ready_to_shoot = False
+                            self.take_water_with = False
 
             """
             >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -806,6 +960,7 @@ class Scene_City(Listener):  # 场景类
         self.attribute_size = SceneSettings.attribute_size  # 属性显示的大小
 
         self.portal2 = Portals(SceneSettings.portal_speed, 0)
+        self.portal_num = 0
 
         # 根据地图的尺寸每行每列逐个生成地图方块
         for i in range(self.map_range[0] // 40 + 1):
@@ -884,7 +1039,7 @@ class Scene_City(Listener):  # 场景类
         self.first_add3 = True
         self.first_add4 = True
 
-        for i in range(20):
+        for i in range(21):
             hp = Attribute_showing(
                 0,
                 pygame.Rect(i * 25 + 10, 30, self.attribute_size, self.attribute_size),
@@ -980,8 +1135,14 @@ class Scene_City(Listener):  # 场景类
                 self.post(Event(Event_Code.CAN_MOVE, event.body))
 
         if event.code == Event_Code.CHECK_PORTAL2:
-
-            if self.portal2.rect.colliderect(self.player.rect) and keys[pygame.K_e]:
+            if self.portal_num <= 20:
+                self.portal_num += 1
+            if (
+                self.portal2.rect.colliderect(self.player.rect)
+                and keys[pygame.K_e]
+                and self.portal_num >= 20
+            ):
+                self.portal_num = 0
                 self.post(Event(Scene_Code.FOREST))
                 # print("go to forest")
 

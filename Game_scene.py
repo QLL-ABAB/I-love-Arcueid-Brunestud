@@ -184,7 +184,7 @@ class Game1_Over(Listener):
         self.player = player
 
     def listen(self, event):
-        text_surface0 = font2.render("PRESS ESC TO OUT", True, (0, 0, 0))
+        text_surface0 = font2.render("PRESS O TO OUT", True, (0, 0, 0))
         text_surface1 = font2.render("STILL WANT TO PLAY?", True, (0, 0, 0))
         text_surface2 = font2.render("Press Space to Restart", True, (0, 0, 0))
         coin_num = font1.render("Coins: " + str(self.player.coin), True, (0, 0, 0))
@@ -193,8 +193,3 @@ class Game1_Over(Listener):
         window.blit(text_surface1, (400, WindowSettings.height / 2))
         window.blit(text_surface2, (400, WindowSettings.height / 2 + 150))
         window.blit(coin_num, (20, 20))
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_ESCAPE]:
-            self.post(Event(Scene_Code.CITY))
-        elif keys[pygame.K_SPACE]:
-            self.post(Event(Scene_Code.GAME_GREEDY_SNAKE))
