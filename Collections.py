@@ -1,5 +1,6 @@
 import pygame
-from Settings import *
+from Settings import Game_Path
+from Settings import WindowSettings
 
 pygame.init()
 

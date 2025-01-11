@@ -85,3 +85,9 @@ class Water_hole(EntityLike):  # 障碍物的类
         self.image.set_alpha(150 - self.staying_time)
         if self.staying_time > 160:
             self.kill()
+
+
+class Relife(EntityLike):
+    def __init__(self, rect: pygame.rect.Rect):
+        self.image = pygame.image.load(Game_Path.relive_path)
+        self.rect = rect

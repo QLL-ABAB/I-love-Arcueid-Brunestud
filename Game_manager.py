@@ -1,7 +1,6 @@
 import pygame
 import time
 from Collections import *
-from Settings import *
 from Bgm_player import *
 from Add_windows import *
 from Shop import *

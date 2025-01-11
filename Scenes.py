@@ -107,6 +107,9 @@ class Scene_Forest(Listener):  # 场景类
             self.player.rect.centery,
         )
 
+        """
+        >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        """  # 水坑
         self.water1 = set()
         self.water2 = set()
         self.water3 = set()
@@ -210,7 +213,47 @@ class Scene_Forest(Listener):  # 场景类
                 )
                 self.water_tiles.append(water_tile)
 
+        """
+        >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        """  # 重生点
+
+        while True:
+            self.judge_water = True
+            self.relife = Relife(
+                pygame.Rect(
+                    random.randint(100, self.map_range[0] - 100),
+                    random.randint(100, self.map_range[1] - 100),
+                    100,
+                    100,
+                )
+            )
+
+            for water in self.water_tiles:
+                if self.relife.rect.colliderect(water.rect):
+                    self.judge_water = False
+
+            if (
+                not self.relife.rect.colliderect(self.portal1.rect)
+                and not self.relife.rect.colliderect(self.portal3.rect)
+                and not self.relife.rect.colliderect(self.player.rect)
+                and self.judge_water
+            ):
+                break
+
+        self.relife_proof_max = pygame.Surface((125, 125))
+        self.relife_proof_max.fill((255, 255, 255))
+        self.relife_proof_max_rect = self.relife_proof_max.get_rect(
+            center=(self.relife.rect.centerx, self.relife.rect.centery)
+        )
+
+        self.relife_proof = pygame.Surface((40, 35))
+        self.relife_proof.fill((255, 255, 255))
+        self.relife_proof_rect = self.relife_proof.get_rect(
+            center=(self.relife.rect.centerx, self.relife.rect.centery - 10)
+        )
+
         # 在地图里随机生成一些障碍物
+
         for _ in range(20):
             tree = Tree(
                 pygame.Rect(
@@ -220,6 +263,10 @@ class Scene_Forest(Listener):  # 场景类
                     40,
                 )
             )
+            collide_with_relife = False
+            if self.relife_proof_max_rect.colliderect(tree.rect):
+                collide_with_relife = True
+
             collide_with_water = False
             for water in self.water_tiles:
                 if tree.rect.colliderect(water.rect):
@@ -236,6 +283,7 @@ class Scene_Forest(Listener):  # 场景类
                 and not tree.rect.colliderect(self.portal3.rect)
                 and not collide_with_water
                 and not collide_with_tree
+                and not collide_with_relife
             ):
                 self.trees.append(tree)
 
@@ -249,6 +297,10 @@ class Scene_Forest(Listener):  # 场景类
                 ),
                 self.player,
             )
+
+            collide_with_relife = False
+            if self.relife_proof_max_rect.colliderect(fire.rect):
+                collide_with_relife = True
 
             collide_with_water = False
             for water in self.water_tiles:
@@ -272,6 +324,7 @@ class Scene_Forest(Listener):  # 场景类
                 and not collide_with_tree
                 and not collide_with_water
                 and not collide_with_fire
+                and not collide_with_relife
             ):
                 self.fires.append(fire)
 
@@ -308,6 +361,9 @@ class Scene_Forest(Listener):  # 场景类
             for water in self.water_tiles:
                 if enemy2.rect.colliderect(water.rect):
                     collide_with_obstacles = True
+
+            if self.relife_proof_max_rect.colliderect(enemy2.rect):
+                collide_with_obstacles = True
 
             collide_with_enemy2 = False
             for e2 in self.enemy2s:
@@ -350,6 +406,9 @@ class Scene_Forest(Listener):  # 场景类
             for water in self.water_tiles:
                 if enemy2.rect.colliderect(water.rect):
                     collide_with_obstacles = True
+
+            if self.relife_proof_max_rect.colliderect(enemy2.rect):
+                collide_with_obstacles = True
 
             collide_with_enemy2 = False
             for e2 in self.enemy2s:
@@ -397,6 +456,9 @@ class Scene_Forest(Listener):  # 场景类
                 if enemy1.rect.colliderect(water.rect):
                     collide_with_obstacles = True
 
+            if self.relife_proof_max_rect.colliderect(enemy1.rect):
+                collide_with_obstacles = True
+
             collide_with_enemy1 = False
             for e1 in self.enemy1s:
                 if enemy1.rect.colliderect(e1.rect):
@@ -434,6 +496,9 @@ class Scene_Forest(Listener):  # 场景类
             for fire in self.fires:
                 if enemy1.rect.colliderect(fire.rect):
                     collide_with_obstacles = True
+
+            if self.relife_proof_max_rect.colliderect(enemy1.rect):
+                collide_with_obstacles = True
 
             for e2 in self.enemy2s:
                 if enemy1.rect.colliderect(e2.rect):
@@ -510,6 +575,9 @@ class Scene_Forest(Listener):  # 场景类
                     can_move = 0
                     break
 
+            if self.relife_proof_rect.colliderect(target_rect):
+                can_move = 0
+
             if can_move:
                 self.post(Event(Event_Code.CAN_MOVE, event.body))
 
@@ -570,6 +638,8 @@ class Scene_Forest(Listener):  # 场景类
 
             for water in self.water_tiles:  # 遍历所有水并描绘
                 water.draw(self.camera)
+
+            self.relife.draw(self.camera)
 
             for tree in self.trees:  # 遍历所有障碍物并描绘
                 tree.draw(self.camera)

@@ -155,6 +155,7 @@ class Game_Path:
         r".\assets\boss_room\boss_fellows\2.png",
     ]
     water_hole_path = r".\assets\tiles\water_hole.png"
+    relive_path = r".\assets\tiles\relive.png"
 
     player_sword_light_path = r".\assets\boss_room\player_attack\sword_light.png"
 
