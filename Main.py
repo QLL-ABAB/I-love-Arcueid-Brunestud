@@ -6,7 +6,6 @@ from Game_manager import *
 from Add_windows import *
 import pygame
 
-
 pygame.init()
 
 clock = pygame.time.Clock()

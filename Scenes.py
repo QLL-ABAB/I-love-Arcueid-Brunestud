@@ -252,6 +252,50 @@ class Scene_Forest(Listener):  # 场景类
             center=(self.relife.rect.centerx, self.relife.rect.centery - 10)
         )
 
+        """
+        >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        """
+        self.whether_save = False
+        self.judege_window_relife = False
+        # self.judege_window_image = pygame.Surface((1000, 500))
+        # self.judege_window_image.fill((20, 20, 20))
+        # # self.judege_window_image.set_alpha(220)
+        # self.judege_window_rect = self.judege_window_image.get_rect()
+        # self.judege_window_rect.center = (
+        #     WindowSettings.width // 2,
+        #     WindowSettings.height // 2,
+        # )
+
+        self.button_image1 = pygame.Surface((250, 125))
+        self.button_image1.fill((50, 50, 50))
+        self.button_rect1 = self.button_image1.get_rect()
+        self.button_rect1.center = (350, 600)
+
+        self.button_image1_clicked = pygame.Surface((250, 125))
+        self.button_image1_clicked.fill((100, 100, 100))
+
+        self.button_image2 = pygame.Surface((250, 125))
+        self.button_image2.fill((50, 50, 50))
+        self.button_rect2 = self.button_image2.get_rect()
+        self.button_rect2.center = (1050, 600)
+
+        self.button_image2_clicked = pygame.Surface((250, 125))
+        self.button_image2_clicked.fill((100, 100, 100))
+
+        self.text4 = font1.render(
+            "You can save your progress by pressing Save button.", True, (255, 255, 255)
+        )
+        self.text5 = font1.render("Or press out to quit", True, (255, 255, 255))
+        self.text4_rect = self.text1.get_rect(center=(WindowSettings.width // 2, 400))
+        self.text5_rect = self.text2.get_rect(center=(WindowSettings.width // 2, 500))
+
+        self.button_text3 = font1.render("Save", True, (255, 255, 255))
+        self.button_text4 = font1.render("OUT", True, (255, 255, 255))
+        self.button_text3_rect = self.button_text1.get_rect(center=(350, 600))
+        self.button_text4_rect = self.button_text2.get_rect(center=(1050, 600))
+        """
+        >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        """
         # 在地图里随机生成一些障碍物
 
         for _ in range(20):
@@ -828,6 +872,43 @@ class Scene_Forest(Listener):  # 场景类
                             self.water_holes.append(water_hole)
                             self.ready_to_shoot = False
                             self.take_water_with = False
+
+            """
+            >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+            """
+            if self.player.rect.colliderect(self.relife_proof_max_rect) and keys[K_e]:
+                self.judege_window_relife = True
+
+            if self.judege_window_relife == True:
+                self.player.speed = 0
+                mouse_pos = pygame.mouse.get_pos()
+                mouse_get_pressed = pygame.mouse.get_pressed()
+
+                window.blit(self.judege_window_image, self.judege_window_rect)
+
+                window.blit(self.text4, self.text4_rect)
+                window.blit(self.text5, self.text5_rect)
+
+                if self.button_rect1.collidepoint(mouse_pos):
+                    window.blit(self.button_image1_clicked, self.button_rect1)
+                    if mouse_get_pressed[0]:
+                        self.whether_save = True
+                        self.judege_window_relife = False
+                        self.player.speed = PlayerSettings.player_Speed
+                else:
+                    window.blit(self.button_image1, self.button_rect1)
+
+                if self.button_rect2.collidepoint(mouse_pos):
+                    window.blit(self.button_image2_clicked, self.button_rect2)
+                    if mouse_get_pressed[0]:
+                        self.whether_save = False
+                        self.player.speed = PlayerSettings.player_Speed
+                        self.judege_window_relife = False
+                else:
+                    window.blit(self.button_image2, self.button_rect2)
+
+                window.blit(self.button_text3, self.button_text3_rect)
+                window.blit(self.button_text4, self.button_text4_rect)
 
             """
             >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
