@@ -5,9 +5,7 @@ import textwrap
 
 from Collections import *
 from Settings import *
-from Wild_scene_entitylike import *
 from Portals import *
-from City_scene_entitylike import *
 from Add_windows import *
 from Openai import *
 

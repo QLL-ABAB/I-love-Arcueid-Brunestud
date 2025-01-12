@@ -3,9 +3,9 @@ import random
 
 from Collections import *
 from Settings import *
-from Wild_scene_entitylike import *
+from Wild_scene_entityLike import *
 from Portals import *
-from City_scene_entitylike import *
+from City_scene_entityLike import *
 from Add_windows import *
 
 pygame.init()

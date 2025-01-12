@@ -12,7 +12,7 @@ from Player import *
 from Scenes import *
 from Settings import *
 from Boss_scene import *
-from Boss_scene_entitylike import *
+from Boss_scene_entityLike import *
 
 pygame.init()
 
