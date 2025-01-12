@@ -8,6 +8,8 @@ from Boss_scene_entitylike import *
 from Add_windows import *
 from Player import *
 from Boss_and_fellows import *
+from Boss_and_fellows import Boss1
+
 
 pygame.init()
 

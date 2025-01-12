@@ -10,8 +10,8 @@ github仓库地址：https://github.com/QLL-ABAB/pj_game
 
 联系方式：
 钱磊：qianlei2024@shanghaitech.edu.cn / 2024533134
-刘鸿瑞：
-董天阳：
+刘鸿瑞：liuhr2024@shanghaitech.edu.cn / 2024533118
+董天阳：dongty2024@shanghaitech.edu.cn / 2024533055
 
 
 # 游戏特色：
