@@ -280,9 +280,14 @@ class Scene_Shop(Listener):
                 if event.type == pygame.KEYDOWN:
 
                     if event.key == pygame.K_BACKSPACE:
+
                         if self.word_print1_before:
                             self.word_print1_before.pop()
-                            self.row[0] = "".join(self.word_print1_before)
+                            self.wrapped_lines = textwrap.wrap(
+                                "".join(self.word_print1_before), width=self.max_width
+                            )
+                            self.rows_num = len(self.wrapped_lines) // 8
+                            self.rows_left = len(self.wrapped_lines) % 8
 
                     elif event.key == pygame.K_KP_ENTER or event.key == pygame.K_RETURN:
 

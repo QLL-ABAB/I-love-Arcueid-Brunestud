@@ -3,6 +3,7 @@ from pygame.locals import *
 import copy
 import time
 import math
+import random
 
 from Collections import *
 from Settings import *
@@ -156,9 +157,19 @@ class Scene_Fight(Listener):
 
         self.type = type
 
+        self.ai_choose_num = 0
+
     def ai_choose(self):
-        Question = "choose 1 or 2 randomly ,just respond with one number"
-        return int(AI_talk(Question))
+        try:
+            Question = "choose 1 or 2 with equal probability, respond with one number"
+            Answer = int(AI_talk(Question))
+            print(Answer)
+            if Answer % 2 == 1:
+                return 1
+            else:
+                return 2
+        except:
+            return random.randint(1, 2)
 
     def listen(self, event: Event):
         super().listen(event)
@@ -316,14 +327,6 @@ class Scene_Fight(Listener):
                     else:
                         window.blit(self.button_image1, self.button_rect1)
 
-                else:
-                    if self.ai_choose() == 1:
-                        self.choose = False
-                        self.player_swing = True
-                        self.player_defend = False
-                        self.player_act = True
-
-                if self.daili != 1:
                     if self.button_rect2.collidepoint(mouse) and self.daili != 1:
                         window.blit(self.button_image2_clicked, self.button_rect2)
                         if mouse_pressed[0]:
@@ -336,7 +339,14 @@ class Scene_Fight(Listener):
                         window.blit(self.button_image2, self.button_rect2)
 
                 else:
-                    if self.ai_choose() == 2:
+                    self.ai_choose_num = self.ai_choose()
+                    if self.ai_choose_num == 1:
+                        self.choose = False
+                        self.player_swing = True
+                        self.player_defend = False
+                        self.player_act = True
+
+                    elif self.ai_choose_num == 2:
                         self.choose = False
                         self.player_defend = True
                         self.player_swing = False
