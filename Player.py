@@ -15,8 +15,7 @@ class Player1(EntityLike):  # 玩家类
     def __init__(self, image: pygame.Surface, rect: pygame.Rect):
         super().__init__(image, rect)
         pygame.sprite.Sprite.__init__(self)
-        self.game_state = GameState()
-        self.hp = self.game_state.player_hp  # 玩家的血量
+
         self.speed = PlayerSettings.player_Speed  # 玩家的速度
         self.width = PlayerSettings.player_width  # 玩家的宽度
         self.height = PlayerSettings.player_height  # 玩家的高度
@@ -24,15 +23,17 @@ class Player1(EntityLike):  # 玩家类
         self.swift = PlayerSettings.player_animation_speed  # 玩家动画效果
         self.right = True  # 玩家是否向右移动
         self.burn = 0  # 燃烧爆条效果
-        self.attack = self.game_state.player_attack  # 玩家的攻击力
-        self.coin = self.game_state.coin  # 玩家的金币数量
 
-        self.blood_eat = self.game_state.blood_eat
-        self.through = self.game_state.through
-        self.add_bullet_speed = self.game_state.add_bullet_speed
-        self.skill = self.game_state.skill
-
+        self.save_name = ""
+        self.hp = 10
+        self.attack = 3
+        self.coin = 6
+        self.blood_eat = False
+        self.through = False
+        self.add_bullet_speed = False
+        self.skill = False
         self.bottle = False
+        self.burn_speed = 2
 
         self.player_bullets = pygame.sprite.Group()
         self.add_bullet_num = 0
@@ -73,7 +74,7 @@ class Player1(EntityLike):  # 玩家类
             self.speed = 0
 
         elif event.code == Event_Code.BURN:
-            self.burn += self.game_state.burn_speed  # 玩家燃烧效果
+            self.burn += self.burn_speed  # 玩家燃烧效果
             if self.burn >= 30:
                 self.hp -= 1  # 玩家受到伤害
                 self.burn -= 30  # 重置燃烧效果

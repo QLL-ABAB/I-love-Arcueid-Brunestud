@@ -14,6 +14,7 @@ pygame.init()
 
 font1 = pygame.font.Font(Game_Path.word_path, TextSettings.font_size)
 font2 = pygame.font.Font(Game_Path.word_path, TextSettings.font_size_plus)
+font3 = pygame.font.Font(Game_Path.word_path, TextSettings.font_size_middle)
 box_rect = pygame.Rect(
     0,
     WindowSettings.height - TextSettings.box_height,

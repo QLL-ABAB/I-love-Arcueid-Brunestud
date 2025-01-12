@@ -14,16 +14,6 @@ from Add_windows import *
 pygame.init()
 
 
-def save_game(game_state, filename):
-    try:
-        with open(filename, "w") as file:
-            # 将游戏状态转换为字典并保存为JSON格式
-            json.dump(game_state.__dict__, file, indent=9)
-        print(f"游戏已保存到 {filename}")
-    except Exception as e:
-        print(f"保存失败: {e}")
-
-
 class Scene_Forest(Listener):  # 场景类
     def __init__(self, player):
         super().__init__()
@@ -298,8 +288,8 @@ class Scene_Forest(Listener):  # 场景类
             "You can save your progress by pressing Save button.", True, (255, 255, 255)
         )
         self.text5 = font1.render("Or press out to quit", True, (255, 255, 255))
-        self.text4_rect = self.text1.get_rect(center=(WindowSettings.width // 2, 400))
-        self.text5_rect = self.text2.get_rect(center=(WindowSettings.width // 2, 500))
+        self.text4_rect = self.text1.get_rect(center=(550, 400))
+        self.text5_rect = self.text2.get_rect(center=(800, 500))
 
         self.button_text3 = font1.render("Save", True, (255, 255, 255))
         self.button_text4 = font1.render("OUT", True, (255, 255, 255))
@@ -935,7 +925,7 @@ class Scene_Forest(Listener):  # 场景类
                 game_state.through = self.player.through
                 game_state.add_bullet_speed = self.player.add_bullet_speed
                 game_state.blood_eat = self.player.blood_eat
-                save_game(game_state, "save1.json")
+                save_game(game_state, self.player.save_name)
 
                 self.whether_save = False
 

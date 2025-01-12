@@ -35,7 +35,7 @@ class GameManager(Listener):
         )
 
         self.scene_forest = Scene_Forest(self.mob)
-        self.scene_beginning = Scene_Beginning()
+        self.scene_beginning = Scene_Beginning(self.mob)
         self.scene_city = Scene_City(self.mob)
         self.scene_ending = Scene_Ending()
         self.scene_boss = Boss_Scene1(self.mob)

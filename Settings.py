@@ -23,20 +23,13 @@ class Game_state_mode:
 
 # 从文件加载游戏状态
 def load_game(filename):
-    """
-    从文件中加载游戏状态
-    :param filename: 存档文件名
-    :return: 恢复的游戏状态对象
-    """
     if not os.path.exists(filename):
         print(f"存档文件 {filename} 不存在！")
         return None
 
     try:
         with open(filename, "r") as file:
-            # 从JSON文件中读取数据并转换为字典
             data = json.load(file)
-            # 创建一个新的游戏状态对象并更新数据
             game_state = Game_state_mode()
             game_state.__dict__.update(data)
             print(f"游戏已从 {filename} 加载")
@@ -49,19 +42,39 @@ def load_game(filename):
         return None
 
 
+def save_game(game_state, filename):
+    try:
+        with open(filename, "w") as file:
+            json.dump(game_state.__dict__, file, indent=9)
+        print(f"游戏已保存到 {filename}")
+    except Exception as e:
+        print(f"保存失败: {e}")
+
+
+def update_state(player, game_state_original):
+    player.hp = game_state_original.player_hp
+    player.attack = game_state_original.player_attack
+    player.burn_speed = game_state_original.burn_speed
+    player.blood_eat = game_state_original.blood_eat
+    player.through = game_state_original.through
+    player.add_bullet_speed = game_state_original.add_bullet_speed
+    player.skill = game_state_original.skill
+    player.bottle = game_state_original.bottle
+    player.coin = game_state_original.coin
+
+
 class GameState:
 
     def __init__(self):
-        game_state_original = load_game("./save1.json")
-        self.player_hp = game_state_original.player_hp
-        self.player_attack = game_state_original.player_attack
-        self.burn_speed = game_state_original.burn_speed
-        self.blood_eat = game_state_original.blood_eat
-        self.through = game_state_original.through
-        self.add_bullet_speed = game_state_original.add_bullet_speed
-        self.skill = game_state_original.skill
-        self.bottle = game_state_original.bottle
-        self.coin = game_state_original.coin
+        self.player_hp = 10
+        self.player_attack = 3
+        self.burn_speed = 2
+        self.blood_eat = False
+        self.through = False
+        self.add_bullet_speed = False
+        self.skill = False
+        self.bottle = False
+        self.coin = 6
 
     # def reset(self):
     #     self.player_hp = 10
@@ -111,6 +124,7 @@ class TextSettings:
     Text = ["Let's have fun!", "Game Over!", "菜"]
     text_color = (255, 0, 0)
     font_size = 35
+    font_size_middle = 55
     font_size_plus = 80
     box_width = WindowSettings.width
     box_height = 200
@@ -213,6 +227,8 @@ class Event_Code(Enum):
 
 
 class Game_Path:
+
+    delete_path = r".\assets\background\delete.png"
 
     tree_path = r".\assets\tiles\tree.png"
     wall_path = r".\assets\tiles\cityWall.png"

@@ -155,9 +155,12 @@ if __name__ == "__main__":
         """
 
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_q] and game_manager.scene == game_manager.scene_beginning:
+        if (
+            keys[pygame.K_q]
+            and game_manager.scene == game_manager.scene_beginning
+            and game_manager.scene_beginning.choose_saver_over
+        ):
             add_event(Event(Scene_Code.FOREST))
-
         if game_manager.mob.hp < 0 and game_manager.judge_first_time:
             game_manager.judge_first_time = False
             time.sleep(1)
