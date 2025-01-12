@@ -275,7 +275,7 @@ class Scene_Beginning(Listener):
 
 
 class Scene_Ending(Listener):
-    def __init__(self):
+    def __init__(self, player):
         super().__init__()
         self.background = pygame.transform.scale(
             pygame.image.load(Game_Path.background_path[1]),
@@ -284,6 +284,7 @@ class Scene_Ending(Listener):
                 WindowSettings.height,
             ),
         )
+        self.player = player
 
     def listen(self, event: Event):
         super().listen(event)
@@ -291,6 +292,10 @@ class Scene_Ending(Listener):
         keys = pygame.key.get_pressed()
 
         if event.code == Event_Code.DRAW:
+
+            game_state_refresh = GameState()
+            save_game(game_state_refresh, self.player.save_name)
+
             window.blit(self.background, (0, 0))
 
             text_surface2 = font2.render("菜", True, (255, 0, 0))
@@ -306,7 +311,7 @@ class Scene_Ending(Listener):
 
 
 class Scene_Winning(Listener):
-    def __init__(self):
+    def __init__(self, player):
         super().__init__()
         self.background = pygame.transform.scale(
             pygame.image.load(Game_Path.background_path[2]),
@@ -315,11 +320,16 @@ class Scene_Winning(Listener):
                 WindowSettings.height,
             ),
         )
+        self.player = player
 
     def listen(self, event: Event):
         super().listen(event)
         keys = pygame.key.get_pressed()
         if event.code == Event_Code.DRAW:
+
+            game_state_refresh = GameState()
+            save_game(game_state_refresh, self.player.save_name)
+
             window.blit(self.background, (0, 0))
 
             text_surface3 = font2.render("YOU WIN!!!!!", True, (0, 0, 0))

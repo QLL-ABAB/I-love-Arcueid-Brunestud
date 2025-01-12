@@ -38,7 +38,7 @@ if __name__ == "__main__":
         if game_manager.scene == game_manager.scene_forest:
             add_event(Event(Event_Code.CHECK_PORTAL1))
             add_event(Event(Event_Code.CHECK_ENEMY1))
-            # add_event(Event(Event_Code.CHECK_PORTAL3))
+
         if game_manager.scene == game_manager.scene_city:
             add_event(Event(Event_Code.CHECK_PORTAL2))
 
@@ -155,11 +155,14 @@ if __name__ == "__main__":
         """
 
         keys = pygame.key.get_pressed()
+
         if (
             keys[pygame.K_q]
             and game_manager.scene == game_manager.scene_beginning
             and game_manager.scene_beginning.choose_saver_over
         ):
+            game_manager.scene_beginning.choose_saver_over = False
+            game_manager.scene_beginning.show_choose = True
             add_event(Event(Scene_Code.FOREST))
         if game_manager.mob.hp < 0 and game_manager.judge_first_time:
             game_manager.judge_first_time = False

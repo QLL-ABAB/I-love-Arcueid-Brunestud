@@ -24,7 +24,7 @@ class Game_state_mode:
 # 从文件加载游戏状态
 def load_game(filename):
     if not os.path.exists(filename):
-        print(f"存档文件 {filename} 不存在！")
+        # print(f"存档文件 {filename} 不存在！")
         return None
 
     try:
@@ -32,13 +32,13 @@ def load_game(filename):
             data = json.load(file)
             game_state = Game_state_mode()
             game_state.__dict__.update(data)
-            print(f"游戏已从 {filename} 加载")
+            # print(f"游戏已从 {filename} 加载")
             return game_state
     except json.JSONDecodeError:
-        print(f"存档文件 {filename} 损坏！")
+        # print(f"存档文件 {filename} 损坏！")
         return None
     except Exception as e:
-        print(f"加载失败: {e}")
+        # print(f"加载失败: {e}")
         return None
 
 
@@ -46,9 +46,10 @@ def save_game(game_state, filename):
     try:
         with open(filename, "w") as file:
             json.dump(game_state.__dict__, file, indent=9)
-        print(f"游戏已保存到 {filename}")
+        # print(f"游戏已保存到 {filename}")
     except Exception as e:
-        print(f"保存失败: {e}")
+        pass
+        # print(f"保存失败: {e}")
 
 
 def update_state(player, game_state_original):

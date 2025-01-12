@@ -37,9 +37,9 @@ class GameManager(Listener):
         self.scene_forest = Scene_Forest(self.mob)
         self.scene_beginning = Scene_Beginning(self.mob)
         self.scene_city = Scene_City(self.mob)
-        self.scene_ending = Scene_Ending()
+        self.scene_ending = Scene_Ending(self.mob)
         self.scene_boss = Boss_Scene1(self.mob)
-        self.scene_win = Scene_Winning()
+        self.scene_win = Scene_Winning(self.mob)
         self.scene_shop = Scene_Shop(self.mob)
         self.scene_greedy_snake = Greedy_snake(self.mob)
         self.scene_game1_over = Game1_Over(self.mob)
@@ -70,8 +70,6 @@ class GameManager(Listener):
         super().listen(event)
 
         if event.code == Scene_Code.GAME_BEGIN:
-            self.scene = self.scenes[0]
-            self.judge_first_time = True
             self.mob = Player1(
                 image=pygame.transform.scale(
                     pygame.image.load(Game_Path.player_run_path1[0]),
@@ -84,12 +82,19 @@ class GameManager(Listener):
                     PlayerSettings.player_height,
                 ),
             )
+            self.scene_beginning = Scene_Beginning(self.mob)
             self.scene_forest = Scene_Forest(self.mob)
             self.scene_city = Scene_City(self.mob)
             self.scene_boss = Boss_Scene1(self.mob)
             self.scene_shop = Scene_Shop(self.mob)
             self.scene_fight1 = Scene_Fight(self.mob, 1)
             self.scene_fight2 = Scene_Fight(self.mob, 2)
+            self.scene_mine_sweeping = Mine_sweeping(self.mob)
+            self.scene_greedy_snake = Greedy_snake(self.mob)
+            self.scene_game1_over = Game1_Over(self.mob)
+            self.scene_game2_over = Game2_Over(self.mob)
+            self.scene_ending = Scene_Ending(self.mob)
+            self.scene_win = Scene_Winning(self.mob)
             self.scenes = [
                 self.scene_beginning,
                 self.scene_forest,
@@ -105,6 +110,8 @@ class GameManager(Listener):
                 self.scene_mine_sweeping,
                 self.scene_game2_over,
             ]
+            self.scene = self.scenes[0]
+            self.judge_first_time = True
 
             self.bgm_player.update(Scene_Code.GAME_BEGIN)
             time.sleep(0.5)

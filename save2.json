@@ -1,11 +1,11 @@
 {
-    "player_hp": 10,
-    "player_attack": 3,
-    "burn_speed": 2,
-    "blood_eat": false,
-    "through": false,
-    "add_bullet_speed": false,
-    "skill": false,
-    "bottle": false,
-    "coin": 6
+         "player_hp": 10,
+         "player_attack": 3,
+         "burn_speed": 2,
+         "blood_eat": false,
+         "through": false,
+         "add_bullet_speed": false,
+         "skill": false,
+         "bottle": false,
+         "coin": 6
 }
