@@ -1,6 +1,8 @@
 import copy
 import pygame
 import random
+import json
+import os
 
 from Collections import *
 from Settings import *
@@ -10,6 +12,16 @@ from City_scene_entityLike import *
 from Add_windows import *
 
 pygame.init()
+
+
+def save_game(game_state, filename):
+    try:
+        with open(filename, "w") as file:
+            # 将游戏状态转换为字典并保存为JSON格式
+            json.dump(game_state.__dict__, file, indent=9)
+        print(f"游戏已保存到 {filename}")
+    except Exception as e:
+        print(f"保存失败: {e}")
 
 
 class Scene_Forest(Listener):  # 场景类
@@ -585,9 +597,13 @@ class Scene_Forest(Listener):  # 场景类
             )
             self.burn_showings.append(burn)
 
-        """
-        >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-        """
+    """
+    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    """
+
+    """
+    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    """
 
     def update_camera(self):
         player_center_cord = self.player.rect.center
@@ -909,6 +925,19 @@ class Scene_Forest(Listener):  # 场景类
 
                 window.blit(self.button_text3, self.button_text3_rect)
                 window.blit(self.button_text4, self.button_text4_rect)
+
+            if self.whether_save == True:
+                game_state = GameState()
+                game_state.player_hp = self.player.hp
+                game_state.coin = self.player.coin
+                game_state.player_attack = self.player.attack
+                game_state.skill = self.player.skill
+                game_state.through = self.player.through
+                game_state.add_bullet_speed = self.player.add_bullet_speed
+                game_state.blood_eat = self.player.blood_eat
+                save_game(game_state, "save1.json")
+
+                self.whether_save = False
 
             """
             >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -1368,93 +1397,3 @@ class Scene_City(Listener):  # 场景类
 
                 window.blit(self.button_text1, self.button_text1_rect)
                 window.blit(self.button_text2, self.button_text2_rect)
-
-
-class Scene_Beginning(Listener):
-    def __init__(self):
-        super().__init__()
-        self.background = pygame.transform.scale(
-            pygame.image.load(Game_Path.background_path[0]),
-            (
-                WindowSettings.width,
-                WindowSettings.height,
-            ),
-        )
-
-    def listen(self, event: Event):
-        super().listen(event)
-
-        if event.code == Event_Code.DRAW:
-            window.blit(self.background, (0, 0))
-
-            text_surface = font2.render(
-                "Press Q to enter", True, TextSettings.text_color
-            )
-            text_rect = text_surface.get_rect(
-                center=(300, WindowSettings.height - TextSettings.box_height)
-            )
-            window.blit(text_surface, text_rect)
-
-
-class Scene_Ending(Listener):
-    def __init__(self):
-        super().__init__()
-        self.background = pygame.transform.scale(
-            pygame.image.load(Game_Path.background_path[1]),
-            (
-                WindowSettings.width,
-                WindowSettings.height,
-            ),
-        )
-
-    def listen(self, event: Event):
-        super().listen(event)
-
-        keys = pygame.key.get_pressed()
-
-        if event.code == Event_Code.DRAW:
-            window.blit(self.background, (0, 0))
-
-            text_surface2 = font2.render("菜", True, (255, 0, 0))
-            text_rect = text_surface2.get_rect(center=(1100, 450))
-            window.blit(text_surface2, text_rect)
-
-            text_surface1 = font2.render("Press R to restart", True, (0, 0, 0))
-            text_rect1 = text_surface1.get_rect(center=(1000, 600))
-            window.blit(text_surface1, text_rect1)
-
-            if keys[pygame.K_r]:
-                self.post(Event(Scene_Code.GAME_BEGIN))
-
-
-class Scene_Winning(Listener):
-    def __init__(self):
-        super().__init__()
-        self.background = pygame.transform.scale(
-            pygame.image.load(Game_Path.background_path[2]),
-            (
-                WindowSettings.width,
-                WindowSettings.height,
-            ),
-        )
-
-    def listen(self, event: Event):
-        super().listen(event)
-        keys = pygame.key.get_pressed()
-        if event.code == Event_Code.DRAW:
-            window.blit(self.background, (0, 0))
-
-            text_surface3 = font2.render("YOU WIN!!!!!", True, (0, 0, 0))
-            text_rect = text_surface3.get_rect(
-                center=(WindowSettings.width / 2, (WindowSettings.height / 2) + 200)
-            )
-            window.blit(text_surface3, text_rect)
-
-            text_surface4 = font1.render("(Press R to restart)", True, (0, 0, 0))
-            text_rect1 = text_surface4.get_rect(
-                center=(WindowSettings.width / 2, (WindowSettings.height / 2) + 300)
-            )
-            window.blit(text_surface4, text_rect1)
-
-            if keys[pygame.K_r]:
-                self.post(Event(Scene_Code.GAME_BEGIN))

@@ -1,4 +1,78 @@
 from enum import Enum
+import json
+import os
+
+
+os.path.join(os.path.dirname(__file__), "save1.json")
+os.path.join(os.path.dirname(__file__), "save2.json")
+os.path.join(os.path.dirname(__file__), "save3.json")
+
+
+class Game_state_mode:
+    def __init__(self):
+        self.player_hp = 10
+        self.player_attack = 3
+        self.burn_speed = 2
+        self.blood_eat = False
+        self.through = False
+        self.add_bullet_speed = False
+        self.skill = False
+        self.bottle = False
+        self.coin = 0
+
+
+# 从文件加载游戏状态
+def load_game(filename):
+    """
+    从文件中加载游戏状态
+    :param filename: 存档文件名
+    :return: 恢复的游戏状态对象
+    """
+    if not os.path.exists(filename):
+        print(f"存档文件 {filename} 不存在！")
+        return None
+
+    try:
+        with open(filename, "r") as file:
+            # 从JSON文件中读取数据并转换为字典
+            data = json.load(file)
+            # 创建一个新的游戏状态对象并更新数据
+            game_state = Game_state_mode()
+            game_state.__dict__.update(data)
+            print(f"游戏已从 {filename} 加载")
+            return game_state
+    except json.JSONDecodeError:
+        print(f"存档文件 {filename} 损坏！")
+        return None
+    except Exception as e:
+        print(f"加载失败: {e}")
+        return None
+
+
+class GameState:
+
+    def __init__(self):
+        game_state_original = load_game("./save1.json")
+        self.player_hp = game_state_original.player_hp
+        self.player_attack = game_state_original.player_attack
+        self.burn_speed = game_state_original.burn_speed
+        self.blood_eat = game_state_original.blood_eat
+        self.through = game_state_original.through
+        self.add_bullet_speed = game_state_original.add_bullet_speed
+        self.skill = game_state_original.skill
+        self.bottle = game_state_original.bottle
+        self.coin = game_state_original.coin
+
+    # def reset(self):
+    #     self.player_hp = 10
+    #     self.player_attack = 3
+    #     self.burn_speed = 2
+    #     self.blood_eat = False
+    #     self.through = False
+    #     self.add_bullet_speed = False
+    #     self.skill = False
+    #     self.bottle = False
+    #     self.coin = 0
 
 
 class WindowSettings:
@@ -6,6 +80,14 @@ class WindowSettings:
     width = 1400
     height = 900
     color = (0, 0, 0)
+
+
+class PlayerSettings:
+    # Initial Player Settings
+    player_width = 60
+    player_height = 60
+    player_animation_speed = 0.2
+    player_Speed = 5
 
 
 class SceneSettings:
@@ -38,18 +120,6 @@ class TextSettings:
 class Snake_Settings:
     snake_speed = 20
     snake_block_size = 20
-
-
-class PlayerSettings:
-    # Initial Player Settings
-    player_Speed = 5
-    player_width = 60
-    player_height = 60
-    player_hp = 10
-    player_animation_speed = 0.2
-    # 战斗设置
-    player_attack = 3
-    burn_speed = 2
 
 
 class EnemySettings:

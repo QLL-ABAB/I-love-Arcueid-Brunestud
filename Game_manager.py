@@ -9,7 +9,8 @@ from Game_scene2 import *
 from Player import *
 from Scenes import *
 from Boss_scene import Boss_Scene1
-from Game_scene2 import * 
+from Game_scene2 import *
+from Restart import *
 
 
 pygame.init()
@@ -47,7 +48,6 @@ class GameManager(Listener):
         self.judge_first_time = True
         self.scene_mine_sweeping = Mine_sweeping(self.mob)
         self.scene_game2_over = Game2_Over(self.mob)
-
 
         self.scenes = [
             self.scene_beginning,

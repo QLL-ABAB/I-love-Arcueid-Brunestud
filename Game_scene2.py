@@ -36,7 +36,6 @@ class Mine_sweeping(Listener):
         self.whether_begin_game = True
 
     def listen(self, event):
-        key_game = pygame.key.get_pressed()
         # mouse_game = pygame.mouse.get_pressed()
         if self.game_close == True:
             self.mine_size = 100
@@ -71,13 +70,6 @@ class Mine_sweeping(Listener):
                 )
                 window.blit(coin_num, (20, 20))
                 pygame.display.flip()
-
-        if self.whether_begin_game == True and key_game[pygame.K_SPACE]:
-            self.whether_begin_game = False
-
-        if key_game[pygame.K_ESCAPE]:
-            self.post(Event(Scene_Code.CITY))
-            pygame.display.flip()
 
         if self.whether_begin_game == False:
             # print(2)
@@ -201,6 +193,7 @@ def draw_board(
                 screen, BLACK, (x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE), 1
             )
 
+
 import pygame
 import random
 import time
@@ -214,6 +207,7 @@ from Add_windows import *
 
 pygame.init()
 
+
 class Mine_sweeping(Listener):
     def __init__(self, player):
         self.player = player
@@ -226,17 +220,20 @@ class Mine_sweeping(Listener):
         self.white = (255, 255, 255)
         self.gray = (192, 192, 192)
         self.red = (255, 0, 0)
-        self.revealed = [[False for _ in range(self.length)] for _ in range(self.height)]
+        self.revealed = [
+            [False for _ in range(self.length)] for _ in range(self.height)
+        ]
         self.dict = {}
         for y in range(self.height):
             for x in range(self.length):
                 self.dict[(x, y)] = 0
-        self.board = create_board(self.length, self.height,  self.mine_number)
+        self.board = create_board(self.length, self.height, self.mine_number)
         self.game_close = False
         self.whether_begin_game = True
+
     def listen(self, event):
         key_game = pygame.key.get_pressed()
-        #mouse_game = pygame.mouse.get_pressed()
+        # mouse_game = pygame.mouse.get_pressed()
         if self.game_close == True:
             self.mine_size = 100
             self.tile_size = 100
@@ -247,7 +244,9 @@ class Mine_sweeping(Listener):
             self.white = (255, 255, 255)
             self.gray = (192, 192, 192)
             self.red = (255, 0, 0)
-            self.revealed = [[False for _ in range(self.length)] for _ in range(self.height)]
+            self.revealed = [
+                [False for _ in range(self.length)] for _ in range(self.height)
+            ]
             self.dict = {}
             for y in range(self.height):
                 for x in range(self.length):
@@ -260,7 +259,7 @@ class Mine_sweeping(Listener):
 
             if self.whether_begin_game == True:
                 text_surface = font2.render("Press Space to Start", True, (0, 0, 0))
-                #print(1)
+                # print(1)
                 window.fill((255, 255, 255))
                 window.blit(text_surface, (400, WindowSettings.height / 2))
                 coin_num = font1.render(
@@ -272,12 +271,12 @@ class Mine_sweeping(Listener):
         if self.whether_begin_game == True and key_game[pygame.K_SPACE]:
             self.whether_begin_game = False
 
-        if  key_game[pygame.K_ESCAPE]:
+        if key_game[pygame.K_ESCAPE]:
             self.post(Event(Scene_Code.CITY))
             pygame.display.flip()
-                
+
         if self.whether_begin_game == False:
-            #print(2)
+            # print(2)
             window.fill((255, 255, 255))
             coin_num = font1.render("Coins: " + str(self.player.coin), True, (0, 0, 0))
             window.blit(coin_num, (20, 20))
@@ -291,12 +290,11 @@ class Mine_sweeping(Listener):
                     if self.board[y][x] != -1:
                         if self.revealed[y][x] and self.dict[(x, y)] == 1:
                             pt += 1
-            if pt == 14*9:
+            if pt == 14 * 9:
                 print("win")
                 self.game_close = True
                 self.player.coin += 30
             pygame.display.flip()
-                
 
 
 class Game2_Over(Listener):
@@ -304,7 +302,7 @@ class Game2_Over(Listener):
         self.player = player
 
     def listen(self, event):
-        text_surface0 = font2.render("PRESS ESC TO OUT", True, (0, 0, 0))
+        text_surface0 = font2.render("PRESS O TO OUT", True, (0, 0, 0))
         text_surface1 = font2.render("STILL WANT TO PLAY?", True, (0, 0, 0))
         text_surface2 = font2.render("Press Space to Restart", True, (0, 0, 0))
         coin_num = font1.render("Coins: " + str(self.player.coin), True, (0, 0, 0))
@@ -322,7 +320,7 @@ class Game2_Over(Listener):
             pygame.display.flip()
 
 
-def create_board(h1,h2, MINE_COUNT):
+def create_board(h1, h2, MINE_COUNT):
     board = [[0 for _ in range(h1)] for _ in range(h2)]
     mines = set()
     while len(mines) < MINE_COUNT:
@@ -340,7 +338,19 @@ def create_board(h1,h2, MINE_COUNT):
 
 
 # 渲染函数
-def draw_board(board, revealed, dict,h1 =14, h2 = 9, TILE_SIZE = 100, screen = window,RED= (255,0,0),GRAY = (192,192,192),WHITE = (255,255,255),BLACK = (0,0,0)):
+def draw_board(
+    board,
+    revealed,
+    dict,
+    h1=14,
+    h2=9,
+    TILE_SIZE=100,
+    screen=window,
+    RED=(255, 0, 0),
+    GRAY=(192, 192, 192),
+    WHITE=(255, 255, 255),
+    BLACK=(0, 0, 0),
+):
     for y in range(h2):
         for x in range(h1):
             cell = board[y][x]
