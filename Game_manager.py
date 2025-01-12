@@ -213,6 +213,7 @@ def run_game(game_manager: GameManager):
     window.fill(WindowSettings.color)
 
     event_get = pygame.event.get()
+    keys = pygame.key.get_pressed()
 
     for event in event_get:  # 将pygame默认事件如键盘等转换到自己的队列中
         if event.type == pygame.QUIT:
