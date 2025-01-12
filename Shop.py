@@ -5,9 +5,9 @@ import textwrap
 
 from Collections import *
 from Settings import *
-from Wild_scene_entityLike import *
+from Wild_scene_entitylike import *
 from Portals import *
-from City_scene_entityLike import *
+from City_scene_entitylike import *
 from Add_windows import *
 from Openai import *
 
@@ -71,7 +71,7 @@ class Scene_Shop(Listener):
         self.bottle_original_image = copy.copy(self.bottle.image)
         self.bottle_changed_image = change_color(self.bottle.image, 1.5, 1.5, 1.5)
 
-        self.num1 = 20
+        self.num1 = 12
 
         self.coin_image = pygame.transform.scale(
             pygame.image.load(Game_Path.coin_path),
@@ -80,6 +80,18 @@ class Scene_Shop(Listener):
         self.attack_showing = Attribute_showing(
             10, pygame.Rect(10, 100, self.attribute_size * 2, self.attribute_size * 2)
         )
+
+        self.number1 = font1.render(str(2), True, (255, 255, 255))
+        self.number2 = font1.render(str(3), True, (255, 255, 255))
+        self.number3 = font1.render(str(4), True, (255, 255, 255))
+        self.number4 = font1.render(str(3), True, (255, 255, 255))
+        self.number5 = font1.render(str(1), True, (255, 255, 255))
+
+        self.number1_rect = self.number1.get_rect(center=(1200, 215))
+        self.number2_rect = self.number2.get_rect(center=(600, 355))
+        self.number3_rect = self.number3.get_rect(center=(900, 355))
+        self.number4_rect = self.number4.get_rect(center=(1200, 355))
+        self.number5_rect = self.number5.get_rect(center=(600, 485))
 
         """
         >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -128,7 +140,7 @@ class Scene_Shop(Listener):
         mouse_pos = pygame.mouse.get_pos()
         mouse_get_pressed = pygame.mouse.get_pressed()
 
-        if self.num1 <= 20:
+        if self.num1 <= 12:
             self.num1 += 1
 
         if self.add_hp.rect.collidepoint(mouse_pos):
@@ -138,7 +150,7 @@ class Scene_Shop(Listener):
                 self.player.coin >= 1
                 and self.player.hp < 20
                 and mouse_get_pressed[0]
-                and self.num1 >= 20
+                and self.num1 >= 12
             ):
                 self.num1 = 0
                 self.player.hp += 1
@@ -153,7 +165,7 @@ class Scene_Shop(Listener):
                 self.player.coin >= 1
                 and self.player.attack < 6
                 and mouse_get_pressed[0]
-                and self.num1 >= 20
+                and self.num1 >= 12
             ):
                 self.num1 = 0
                 self.player.attack += 1
@@ -168,7 +180,7 @@ class Scene_Shop(Listener):
                 self.player.coin >= 2
                 and self.not_buy_blood == True
                 and mouse_get_pressed[0]
-                and self.num1 >= 20
+                and self.num1 >= 12
             ):
                 self.num1 = 0
                 self.player.coin -= 2
@@ -185,7 +197,7 @@ class Scene_Shop(Listener):
                 self.player.coin >= 3
                 and self.not_buy_through == True
                 and mouse_get_pressed[0]
-                and self.num1 >= 20
+                and self.num1 >= 12
             ):
                 self.num1 = 0
                 self.player.coin -= 3
@@ -201,7 +213,7 @@ class Scene_Shop(Listener):
                 self.player.coin >= 4
                 and self.not_buy_add_bullet_speed == True
                 and mouse_get_pressed[0]
-                and self.num1 >= 20
+                and self.num1 >= 12
             ):
                 self.num1 = 0
                 self.player.coin -= 4
@@ -217,7 +229,7 @@ class Scene_Shop(Listener):
                 self.player.coin >= 3
                 and self.not_buy_skill == True
                 and mouse_get_pressed[0]
-                and self.num1 >= 20
+                and self.num1 >= 12
             ):
                 self.num1 = 0
                 self.player.coin -= 3
@@ -234,7 +246,7 @@ class Scene_Shop(Listener):
                 self.player.coin >= 1
                 and self.not_buy_bottle == True
                 and mouse_get_pressed[0]
-                and self.num1 >= 20
+                and self.num1 >= 12
             ):
                 self.num1 = 0
                 self.player.coin -= 1
@@ -417,5 +429,11 @@ class Scene_Shop(Listener):
             window.blit(self.attack_showing.image, self.attack_showing.rect)
             attack_num = font1.render(str(self.player.attack), True, (0, 0, 0))
             window.blit(attack_num, (50, 100))
+
+            window.blit(self.number1, self.number1_rect)
+            window.blit(self.number2, self.number2_rect)
+            window.blit(self.number3, self.number3_rect)
+            window.blit(self.number4, self.number4_rect)
+            window.blit(self.number5, self.number5_rect)
 
             self.mouse()

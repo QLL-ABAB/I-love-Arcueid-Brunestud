@@ -4,10 +4,10 @@ from Boss_and_fellows import *
 from Collections import *
 from Settings import *
 from Portals import *
-from Boss_scene_entityLike import *
+from Boss_scene_entitylike import *
 from Add_windows import *
 from Player import *
-from Boss_and_fellows import Boss1
+from Boss_and_fellows import *
 
 pygame.init()
 

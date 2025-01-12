@@ -1,5 +1,4 @@
 from openai import OpenAI
-import re
 
 client = OpenAI(base_url="http://10.15.88.73:5032/v1", api_key="ollama")
 

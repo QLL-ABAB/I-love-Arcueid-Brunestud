@@ -1,14 +1,12 @@
 import copy
 import pygame
 import random
-import json
-import os
 
 from Collections import *
 from Settings import *
-from Wild_scene_entityLike import *
+from Wild_scene_entitylike import *
 from Portals import *
-from City_scene_entityLike import *
+from City_scene_entitylike import *
 from Add_windows import *
 
 pygame.init()
