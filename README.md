@@ -1,11 +1,14 @@
 # 基本信息
-队名：我要抓走你的码码
+英文队名：I-love-Arcueid-Brunestud
+中文队名：我要抓走你的码码
 
 github仓库地址：https://github.com/QLL-ABAB/I-love-Arcueid-Brunestud
 
 队员：
 钱磊：找所有的素材、写所有的代码、report/README等的撰写
+
 刘鸿瑞：None
+
 董天阳：扫雷部分的整合
 
 联系方式：
